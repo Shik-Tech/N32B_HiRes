@@ -1,8 +1,8 @@
 /*
-    N32B Firmware v3.0
-    MIT License
+  N32B Hi Res Firmware v3.0.2
+  MIT License
 
-    Copyright (c) 2021 SHIK
+  Copyright (c) 2021 SHIK
 */
 
 #ifndef N32B_DISPLAY_h

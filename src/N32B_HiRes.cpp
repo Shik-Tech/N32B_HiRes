@@ -132,7 +132,6 @@ void loop()
 {
   muxFactory.update();
 
-  // Iterate all knobs and send midi messages
   for (uint8_t currentKnob = 0; currentKnob < NUMBER_OF_KNOBS; currentKnob++)
   {
     interpretKnob(currentKnob, false, inhibitMidi);
@@ -141,11 +140,4 @@ void loop()
 
   renderButtonFunctions(); // Update buttons stats
   n32b_display.updateDisplay();
-
-  // Inhibit sending messages while changing channel
-  // This will prevent unchanged values from being fired
-  //  if (millis() - pressedTime > 500)
-  //  {
-  //    inhibitMidi = false;
-  //  }
 }
