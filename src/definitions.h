@@ -101,14 +101,8 @@ struct Preset_t
 extern byte currentPresetNumber;
 extern Preset_t activePreset;
 
-// extern unsigned int knobBuffer[4][32];
-// extern unsigned int emittedValue[5][32];
-
 extern unsigned int knobBuffer[4][32];
 extern unsigned int emittedValue[3][32];
-
-// unsigned int knobBuffer[5][32];
-// unsigned int emittedValue[3][32];
 
 /* Buttons variables */
 extern const unsigned int SHORT_PRESS_TIME; // Milliseconds

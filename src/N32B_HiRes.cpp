@@ -70,7 +70,7 @@ void setup()
       digitalWrite(LED_PIN, LOW);
 
       // Clean eeprom
-      for (int i = 0; i < EEPROM.length(); i++)
+      for (unsigned int i = 0; i < EEPROM.length(); i++)
       {
         EEPROM.write(i, 0);
       }
@@ -81,7 +81,7 @@ void setup()
   // Write the factory presets to memory if the device was turn on for the first time
   if (!isEEPROMvalid())
   {
-    for (uint8_t i = 0; i < 5; i++)
+    for (int i = 0; i < 5; i++)
     {
       digitalWrite(LED_PIN, HIGH);
       delay(300);

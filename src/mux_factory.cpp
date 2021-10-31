@@ -45,7 +45,7 @@ void MUX_FACTORY::read()
         uint8_t index = (i * 16) + currentChannel;
         if (index < NUMBER_OF_KNOBS)
         {
-            for (uint8_t j = 4; j > 0; j--)
+            for (uint8_t j = 3; j > 0; j--)
             {
                 knobBuffer[j][index] = knobBuffer[j - 1][index];
             }

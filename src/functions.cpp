@@ -30,10 +30,17 @@ void interpretKnob(uint8_t index, bool force, bool inhibit)
   // Read knob value
   uint16_t toSend = getKnobValue(index);
   // If the value to send is relevant, send it to the MIDI OUT port
-  if (((toSend != emittedValue[0][index]) && (toSend != emittedValue[1][index]) && (toSend != emittedValue[3][index]) && (toSend != emittedValue[3][index]) && (toSend != emittedValue[4][index])) || (force == true))
+  if (((toSend != emittedValue[0][index]) && (toSend != emittedValue[1][index]) && (toSend != emittedValue[2][index])) || (force == true))
   {
-    Serial.print("toSend: ");
-    Serial.println(toSend);
+    if (index == 15)
+    {
+      Serial.print("toSend: ");
+      Serial.println(toSend);
+      Serial.println(emittedValue[0][index]);
+      Serial.println(emittedValue[1][index]);
+      Serial.println(emittedValue[2][index]);
+      Serial.println("-------------------------");
+    }
     // CC or NRPN?
     if (activePreset.knobInfo[index].NRPN == 0)
     {
@@ -74,7 +81,6 @@ void sendCCMessage(uint8_t MSB, uint8_t LSB, uint16_t value, uint8_t channel)
   if (activePreset.highResolution)
   {
     unsigned int shiftedValue = map(value, 0, 1023, 0, 16383);
-    Serial.println(shiftedValue);
     MIDICoreSerial.sendControlChange(MSB, shiftedValue >> 7, channel);
     MIDICoreSerial.sendControlChange(LSB, lowByte(shiftedValue) >> 1, channel);
 
@@ -164,7 +170,6 @@ void buttonReleaseAction(bool direction)
 
   if (millis() - pressedTime < SHORT_PRESS_TIME)
   {
-    // inhibitMidi = true;
     if (isPresetMode)
     {
       changePreset(direction);
@@ -184,6 +189,7 @@ void buttonReleaseAction(bool direction)
 void buttonPressAction(bool direction)
 {
   pressedTime = millis();
+  // inhibitMidi = true;
 
   MIDICoreSerial.turnThruOff();
   MIDICoreUSB.turnThruOff();
@@ -242,11 +248,17 @@ void doMidiRead()
 uint16_t getKnobValue(uint8_t index)
 {
   uint16_t average = 0;
-  for (uint8_t i = 0; i < 5; i++)
+  for (uint8_t i = 0; i < 3; i++)
   {
     average += knobBuffer[i][index];
   }
-  average /= 5;
+  average /= 3;
 
+#ifdef MK2
+  return 1023 - average;
+#endif
+
+#ifndef MK2
   return average;
+#endif
 }

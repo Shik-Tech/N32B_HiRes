@@ -28,6 +28,17 @@ void formatFactory()
   // Create default preset
   Preset_t defaultPreset;
   defaultPreset.channel = 1;
+#ifdef MK2
+  for (uint8_t indexId = 0; indexId < 32; indexId++)
+  {
+    defaultPreset.knobInfo[indexId].MSB = indexId;
+    defaultPreset.knobInfo[indexId].LSB = indexId + 32;
+    defaultPreset.knobInfo[indexId].NRPN = 0;
+    defaultPreset.knobInfo[indexId].CHANNEL = 128;
+  }
+#endif
+
+#ifndef MK2
   uint8_t knobsLocation[32] = {
       15, 14, 12, 9, 31, 24, 20, 16,
       13, 11, 10, 2, 30, 25, 21, 17,
@@ -40,6 +51,7 @@ void formatFactory()
     defaultPreset.knobInfo[knobsLocation[indexId]].NRPN = 0;
     defaultPreset.knobInfo[knobsLocation[indexId]].CHANNEL = 128;
   }
+#endif
 
   defaultPreset.highResolution = 1;
 

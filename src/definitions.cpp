@@ -66,10 +66,6 @@ const uint8_t NUMBER_OF_PRESETS = 5;
 byte currentPresetNumber = 0;
 Preset_t activePreset;
 
-
-// unsigned int knobBuffer[4][32];
-// unsigned int emittedValue[5][32];
-
 unsigned int knobBuffer[4][32];
 unsigned int emittedValue[3][32];
 
