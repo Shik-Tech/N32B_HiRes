@@ -16,12 +16,14 @@
 #include <USB-MIDI.h>
 #include <ezButton.h>
 
+#include "mux_factory.h"
 #include "display.h"
 
 USING_NAMESPACE_MIDI;
 
 extern MidiInterface<USBMIDI_NAMESPACE::usbMidiTransport> MIDICoreUSB;
 extern MIDI_NAMESPACE::MidiInterface<MIDI_NAMESPACE::SerialMIDI<HardwareSerial>> MIDICoreSerial;
+extern MUX_FACTORY muxFactory;
 extern N32B_DISPLAY n32b_display;
 extern ezButton buttonA;
 extern ezButton buttonB;
@@ -101,8 +103,10 @@ struct Preset_t
 extern byte currentPresetNumber;
 extern Preset_t activePreset;
 
-extern unsigned int knobBuffer[4][32];
-extern unsigned int emittedValue[3][32];
+// extern uint8_t NUMBER_OF_BUFFERS;
+// extern unsigned int knobBuffer[3][32];
+// extern unsigned int averageValues[32];
+// extern unsigned int emittedValue[3][32];
 
 /* Buttons variables */
 extern const unsigned int SHORT_PRESS_TIME; // Milliseconds

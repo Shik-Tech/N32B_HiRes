@@ -13,27 +13,29 @@
 class N32B_DISPLAY : public LEDMatrixDriver
 {
 public:
-    N32B_DISPLAY(int NO_OF_DRIVERS, int LEDMATRIX_CS_PIN) : LEDMatrixDriver(NO_OF_DRIVERS, LEDMATRIX_CS_PIN){};
+  N32B_DISPLAY(int NO_OF_DRIVERS, int LEDMATRIX_CS_PIN) : LEDMatrixDriver(NO_OF_DRIVERS, LEDMATRIX_CS_PIN){};
 
-    // Auto clear the display
-    void updateDisplay(uint8_t readInterval = 255);
+  // Auto clear the display
+  void updateDisplay(unsigned long readInterval = 600);
 
-    // Blink the decimal points
-    void blinkDot(uint8_t);
+  void printEachDigit(int);
+  void showValue(int);
+  // Blink the decimal points
+  void blinkDot(uint8_t);
 
-    void showChannelNumber(uint8_t);
+  void showChannelNumber(uint8_t);
 
-    void showPresetNumber(byte);
-    void showStartUpAnimation();
+  void showPresetNumber(byte);
+  void showStartUpAnimation();
 
-    // Show animation after factory reset (infinity sign animation)
-    void factoryResetAnimation();
+  // Show animation after factory reset (infinity sign animation)
+  void factoryResetAnimation();
 
-    // Show save message (Sv.)
-    void showSaveMessage();
+  // Show save message (Sv.)
+  void showSaveMessage();
 
 private:
-    unsigned long displayOffTimer;
+  unsigned long displayOffTimer;
 };
 
 #endif

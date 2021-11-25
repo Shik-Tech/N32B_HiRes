@@ -10,6 +10,8 @@
 USBMIDI_CREATE_INSTANCE(0, MIDICoreUSB);
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDICoreSerial);
 
+MUX_FACTORY muxFactory;
+
 N32B_DISPLAY n32b_display(1, 10);
 
 ezButton buttonA(BUTTON_A_PIN);
@@ -66,8 +68,10 @@ const uint8_t NUMBER_OF_PRESETS = 5;
 byte currentPresetNumber = 0;
 Preset_t activePreset;
 
-unsigned int knobBuffer[4][32];
-unsigned int emittedValue[3][32];
+// uint8_t NUMBER_OF_BUFFERS = 3;
+// unsigned int knobBuffer[3][32];
+// unsigned int averageValues[32];
+// unsigned int emittedValue[3][32];
 
 /* Buttons variables */
 const unsigned int SHORT_PRESS_TIME = 600; // Milliseconds

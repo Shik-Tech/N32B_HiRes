@@ -39,13 +39,13 @@ void processSysex(unsigned char *data, unsigned int size)
         {
             loadPreset(data[KNOB_INDEX]);
         }
-        if (data[COMMAND] == SYNC_KNOBS)
-        {
-            for (uint8_t i = 0; i < NUMBER_OF_KNOBS; i++)
-            {
-                interpretKnob(i, true, false);
-            }
-        }
+        // if (data[COMMAND] == SYNC_KNOBS)
+        // {
+        //     for (uint8_t i = 0; i < NUMBER_OF_KNOBS; i++)
+        //     {
+        //         interpretKnob(i, true, false);
+        //     }
+        // }
         if (data[COMMAND] == CHANGE_CHANNEL)
         {
             handleChangeChannel(data[KNOB_INDEX]);

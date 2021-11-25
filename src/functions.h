@@ -18,12 +18,12 @@
 USING_NAMESPACE_MIDI;
 
 // void onUsbMessage(const MidiMessage& message)
-void onUsbMessage(const midi::Message<128>&);
+void onUsbMessage(const midi::Message<128> &);
 
 // void onSerialMessage(const MidiMessage& message)
-void onSerialMessage(const midi::Message<128>&);
+void onSerialMessage(const midi::Message<128> &);
 
-void interpretKnob(uint8_t, bool, bool);
+void interpretKnob(uint8_t, bool, bool, uint16_t);
 
 void sendCCMessage(uint8_t, uint8_t, uint16_t, uint8_t);
 

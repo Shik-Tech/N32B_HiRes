@@ -7,7 +7,7 @@
 
 #include "display.h"
 // Auto clear the display
-void N32B_DISPLAY::updateDisplay(uint8_t readInterval)
+void N32B_DISPLAY::updateDisplay(unsigned long readInterval)
 {
     if (millis() - displayOffTimer >= readInterval)
     {
@@ -16,6 +16,48 @@ void N32B_DISPLAY::updateDisplay(uint8_t readInterval)
         display();
         clear();
     }
+}
+
+// void N32B_DISPLAY::printEachDigit(int value)
+// {
+//     if (value >= 10)
+//         printEachDigit(value / 10);
+
+//     int digit = value % 10 ;
+//     setDigit(digit, value % 10);
+//     Serial.print("digit: ");
+//     Serial.println(digit);
+//     Serial.println("--------");
+// }
+void N32B_DISPLAY::showValue(int value)
+{
+    setDigit(1, 15);
+    int number = value;
+    uint8_t numberOfDigits = 0;
+    if (number == 0)
+    {
+        setDigit(0, 0);
+    }
+    else
+    {
+        while (number > 0)
+        {
+            int digit = number % 10;
+
+            if (value > 99 && numberOfDigits < 1)
+            {
+                setDigit(numberOfDigits, digit, true);
+            }
+            else
+            {
+                setDigit(numberOfDigits, digit);
+            }
+            number /= 10;
+            numberOfDigits++;
+        }
+    }
+    display();
+    displayOffTimer = millis();
 }
 
 // Blink the decimal points
@@ -45,6 +87,7 @@ void N32B_DISPLAY::showChannelNumber(uint8_t channelNumber)
 
     display();
     displayOffTimer = millis();
+    delay(500);
 }
 
 void N32B_DISPLAY::showPresetNumber(byte presetNumber)

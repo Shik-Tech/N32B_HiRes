@@ -9,17 +9,13 @@
 #include <Arduino.h>
 
 #include "definitions.h"
-#include "mux_factory.h"
 #include "functions.h"
 #include "sysex.h"
-
-/* Mux setup */
-MUX_FACTORY muxFactory;
 
 void setup()
 {
   n32b_display.setIntensity(0); // 0 = min, 15 = max
-  n32b_display.setScanLimit(2); // 0-7: Show 1-8 digits. Beware of currenct restrictions for 1-3 digits! See datasheet.
+  n32b_display.setScanLimit(1); // 0-7: Show 1-8 digits. Beware of currenct restrictions for 1-3 digits! See datasheet.
   n32b_display.setDecode(0xFF); // Enable "BCD Type B" decoding for all digits.
   n32b_display.setEnabled(true);
   n32b_display.setDigit(0, 15);
@@ -130,11 +126,10 @@ void setup()
 
 void loop()
 {
-  muxFactory.update();
-
   for (uint8_t currentKnob = 0; currentKnob < NUMBER_OF_KNOBS; currentKnob++)
   {
-    interpretKnob(currentKnob, false, inhibitMidi);
+    muxFactory.setMultiplexer(currentKnob);
+    interpretKnob(currentKnob, false, inhibitMidi, muxFactory.readSingle(currentKnob));
   }
   doMidiRead();
 
