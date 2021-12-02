@@ -18,17 +18,6 @@ void N32B_DISPLAY::updateDisplay(unsigned long readInterval)
     }
 }
 
-// void N32B_DISPLAY::printEachDigit(int value)
-// {
-//     if (value >= 10)
-//         printEachDigit(value / 10);
-
-//     int digit = value % 10 ;
-//     setDigit(digit, value % 10);
-//     Serial.print("digit: ");
-//     Serial.println(digit);
-//     Serial.println("--------");
-// }
 void N32B_DISPLAY::showValue(int value)
 {
     setDigit(1, 15);
@@ -56,6 +45,8 @@ void N32B_DISPLAY::showValue(int value)
             numberOfDigits++;
         }
     }
+
+    setIntensity(map(value, 0, 127, 0, 4));
     display();
     displayOffTimer = millis();
 }
@@ -63,12 +54,10 @@ void N32B_DISPLAY::showValue(int value)
 // Blink the decimal points
 void N32B_DISPLAY::blinkDot(uint8_t dotSide)
 {
-    // if (millis() - displayOffTimer >= readInterval)
-    // {
-    setDigit(!dotSide, 15);      // 15 = blank
-    setDigit(dotSide, 15, true); // 15 = blank
+    setIntensity(0);
+    setDigit(!dotSide, 15, true); // 15 = blank
+    setDigit(dotSide, 15);        // 15 = blank
     display();
-    // }
     displayOffTimer = millis();
 }
 
@@ -87,7 +76,6 @@ void N32B_DISPLAY::showChannelNumber(uint8_t channelNumber)
 
     display();
     displayOffTimer = millis();
-    delay(500);
 }
 
 void N32B_DISPLAY::showPresetNumber(byte presetNumber)

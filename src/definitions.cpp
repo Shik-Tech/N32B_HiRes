@@ -60,6 +60,15 @@ const uint8_t CHANGE_CHANNEL = 9;         // Changes the global MIDI channel
 const uint8_t DISABLE_KNOB = 11;          // Disable
 const uint8_t HIGH_RES_14BIT = 14;        // Use 7-bit or 14-bit midi messages
 
+int currentPotsState[32] = {0};
+int previousPotsState[32] = {0};
+int currentMidiState[32] = {0};
+int previousMidiState[32] = {0};
+int variationThreshold = 6;
+unsigned long prevoiusTime[32] = {0};
+unsigned long potReadingResetTimer[32] = {0};
+unsigned int TIMEOUT = 300;
+
 // General definitions
 const uint8_t NUMBER_OF_KNOBS = 32;
 const uint8_t NUMBER_OF_PRESETS = 5;
@@ -88,4 +97,3 @@ bool inhibitMidi = false;
 bool wasFactoryReset = false;
 // byte index in EEPROM for the last used preset
 uint8_t lastUsedPresetAddress = 0;
-

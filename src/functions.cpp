@@ -25,126 +25,57 @@ void onSerialMessage(const midi::Message<128> &message)
   }
 }
 
-int potCState[32] = {0};       // Current state of the pot
-int potPState[32] = {0};       // Previous state of the pot
-int midiCState[32] = {0};      // Current state of the midi value
-int midiPState[32] = {0};      // Previous state of the midi value
-int varThreshold = 6;          //* Threshold for the potentiometer signal variation
-unsigned long PTime[32] = {0}; // Previously stored time
-unsigned long timer[32] = {0}; // Stores the time that has elapsed since the timer was reset
-unsigned int TIMEOUT = 300;    //* Amount of time the potentiometer will be read after it exceeds the varThreshold
-boolean potMoving = true;      // If the potentiometer is moving
-
 void interpretKnob(uint8_t index, bool force, bool inhibit, uint16_t readValue)
 {
-  potCState[index] = readValue;
-  midiCState[index] = readValue;
-  // midiCState[index] = map(potCState[index], 0, 1023, 0, 127); // Maps the reading of the potCState to a value usable in midi
-  
-  // Calculates the absolute value between the difference between the current and previous state of the pot
-  int potVar = abs(potCState[index] - potPState[index]);
+  boolean isPotMoving; // If the potentiometer is moving
 
-  if (potVar > varThreshold)
-  {                          // Opens the gate if the potentiometer variation is greater than the threshold
-    PTime[index] = millis(); // Stores the previous time
+  currentPotsState[index] = readValue;
+  currentMidiState[index] = readValue;
+
+  // Calculates the absolute value between the difference between the current and previous state of the pot
+  if (abs(currentPotsState[index] - previousPotsState[index]) > variationThreshold)
+  {                                 // Opens the gate if the potentiometer variation is greater than the threshold
+    prevoiusTime[index] = millis(); // Stores the previous time
   }
 
-  timer[index] = millis() - PTime[index]; // Resets the timer 11000 - 11000 = 0ms
+  potReadingResetTimer[index] = millis() - prevoiusTime[index]; // Resets the potReadingResetTimer 11000 - 11000 = 0ms
 
-  if (timer[index] < TIMEOUT)
-  { // If the timer is less than the maximum allowed time it means that the potentiometer is still moving
-    potMoving = true;
+  if (potReadingResetTimer[index] < TIMEOUT)
+  { // If the potReadingResetTimer is less than the maximum allowed time it means that the potentiometer is still moving
+    isPotMoving = true;
   }
   else
   {
-    potMoving = false;
+    isPotMoving = false;
   }
 
-  if (potMoving == true)
+  if (isPotMoving == true)
   { // If the potentiometer is still moving, send the change control
-    if (midiPState[index] != midiCState[index])
+    if (previousMidiState[index] != currentMidiState[index])
     {
-      //Serial.println(midiCState);
       uint8_t knobChannel = activePreset.knobInfo[index].CHANNEL & 0x7f;
       if (knobChannel > 0 && knobChannel < 17)
       {
-        sendCCMessage(activePreset.knobInfo[index].MSB, activePreset.knobInfo[index].LSB, readValue, knobChannel);
+        sendCCMessage(activePreset.knobInfo[index].MSB, activePreset.knobInfo[index].LSB, currentMidiState[index], knobChannel);
       }
       else if (knobChannel == 0)
       {
-        sendCCMessage(activePreset.knobInfo[index].MSB, activePreset.knobInfo[index].LSB, readValue, activePreset.channel);
+        sendCCMessage(activePreset.knobInfo[index].MSB, activePreset.knobInfo[index].LSB, currentMidiState[index], activePreset.channel);
       }
-      // n32b_display.blinkDot(1);
 
-      potPState[index] = potCState[index]; // Stores the current reading of the potentiometer to compare with the next
-      midiPState[index] = midiCState[index];
+      previousPotsState[index] = currentPotsState[index]; // Stores the current reading of the potentiometer to compare with the next
+      previousMidiState[index] = currentMidiState[index];
     }
   }
-
-  //////////////////////////////////////
-  // Read knob value
-  // uint16_t toSend = getKnobValue(index);
-  // If the value to send is relevant, send it to the MIDI OUT port
-  // if (((toSend != emittedValue[0][index]) && (toSend != emittedValue[1][index]) && (toSend != emittedValue[2][index])) || (force == true))
-  // uint16_t toSend = averageValues[index];
-  // if (((toSend != emittedValue[0][index]) && (toSend != emittedValue[1][index]) && (toSend != emittedValue[2][index])) || (force == true))
-  // {
-  //   if (!inhibit)
-  //   {
-  //     if (index == 15)
-  //     {
-  //       // Serial.print("toSend: ");
-  //       // Serial.println(toSend);
-  //       // Serial.println(emittedValue[0][index]);
-  //       // Serial.println(emittedValue[1][index]);
-  //       // Serial.println(emittedValue[2][index]);
-  //       // Serial.println("-------------------------");
-
-  //       Serial.print("toSend: ");
-  //       Serial.println(toSend);
-  //       // Serial.println(knobBuffer[0][index]);
-  //       Serial.println(knobBuffer[1][index]);
-  //       Serial.println(knobBuffer[2][index]);
-  //       Serial.println(knobBuffer[3][index]);
-  //       Serial.println("-------------------------");
-  //     }
-  //     // CC or NRPN?
-  //     if (activePreset.knobInfo[index].NRPN == 0)
-  //     {
-  //       // CC Message
-  //       // Check if it is channel specific message
-  //       uint8_t knobChannel = activePreset.knobInfo[index].CHANNEL & 0x7f;
-  //       if (knobChannel > 0 && knobChannel < 17)
-  //       {
-  //         sendCCMessage(activePreset.knobInfo[index].MSB, activePreset.knobInfo[index].LSB, toSend, knobChannel);
-  //       }
-  //       else if (knobChannel == 0)
-  //       {
-  //         sendCCMessage(activePreset.knobInfo[index].MSB, activePreset.knobInfo[index].LSB, toSend, activePreset.channel);
-  //       }
-  //       n32b_display.blinkDot(1);
-  //     }
-  //     else
-  //     {
-  //       // NRPN Message
-  //       sendNRPM(activePreset.knobInfo[index].MSB, activePreset.knobInfo[index].LSB, toSend, activePreset.channel);
-  //       n32b_display.blinkDot(1);
-  //     }
-  //   }
-
-  //   // Fill the emission buffers
-  //   for (uint8_t i = 2; i > 0; i--)
-  //   {
-  //     emittedValue[i][index] = emittedValue[i - 1][index];
-  //   }
-  //   emittedValue[0][index] = toSend;
-  // }
 }
 
 void sendCCMessage(uint8_t MSB, uint8_t LSB, uint16_t value, uint8_t channel)
 {
   if (activePreset.highResolution)
   {
+#ifdef MK2
+    value = 1023 - value;
+#endif
     unsigned int shiftedValue = map(value, 0, 1023, 0, 16383);
     MIDICoreSerial.sendControlChange(MSB, shiftedValue >> 7, channel);
     MIDICoreSerial.sendControlChange(LSB, lowByte(shiftedValue) >> 1, channel);

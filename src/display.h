@@ -20,17 +20,12 @@ public:
 
   void printEachDigit(int);
   void showValue(int);
-  // Blink the decimal points
   void blinkDot(uint8_t);
-
   void showChannelNumber(uint8_t);
-
   void showPresetNumber(byte);
   void showStartUpAnimation();
-
   // Show animation after factory reset (infinity sign animation)
   void factoryResetAnimation();
-
   // Show save message (Sv.)
   void showSaveMessage();
 

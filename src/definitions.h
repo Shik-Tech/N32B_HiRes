@@ -71,6 +71,15 @@ extern const uint8_t CHANGE_CHANNEL;         // Changes the global MIDI channel
 extern const uint8_t DISABLE_KNOB;           // Disable
 extern const uint8_t HIGH_RES_14BIT;         // Use 7-bit or 14-bit midi messages
 
+extern int currentPotsState[32];               // Current state of the pot
+extern int previousPotsState[32];              // Previous state of the pot
+extern int currentMidiState[32];               // Current state of the midi value
+extern int previousMidiState[32];              // Previous state of the midi value
+extern int variationThreshold;                 // Threshold for the potentiometer signal variation
+extern unsigned long prevoiusTime[32];         // Previously stored time
+extern unsigned long potReadingResetTimer[32]; // Stores the time that has elapsed since the timer was reset
+extern unsigned int TIMEOUT;                   // Amount of time the potentiometer will be read after it exceeds the variationThreshold
+
 // General definitions
 extern const uint8_t NUMBER_OF_KNOBS;
 extern const uint8_t NUMBER_OF_PRESETS;
