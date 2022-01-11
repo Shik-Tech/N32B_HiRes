@@ -7,7 +7,7 @@
 
 #include "display.h"
 // Auto clear the display
-void N32B_DISPLAY::updateDisplay(unsigned long readInterval)
+void N32B_DISPLAY::updateDisplay(uint8_t readInterval)
 {
     if (millis() - displayOffTimer >= readInterval)
     {
@@ -46,7 +46,7 @@ void N32B_DISPLAY::showValue(int value)
         }
     }
 
-    setIntensity(map(value, 0, 127, 0, 4));
+    // setIntensity(map(value, 0, 127, 0, 4));
     display();
     displayOffTimer = millis();
 }
@@ -54,7 +54,7 @@ void N32B_DISPLAY::showValue(int value)
 // Blink the decimal points
 void N32B_DISPLAY::blinkDot(uint8_t dotSide)
 {
-    setIntensity(0);
+    // setIntensity(0);
     setDigit(!dotSide, 15, true); // 15 = blank
     setDigit(dotSide, 15);        // 15 = blank
     display();

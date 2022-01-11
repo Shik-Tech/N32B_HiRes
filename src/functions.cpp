@@ -25,77 +25,67 @@ void onSerialMessage(const midi::Message<128> &message)
   }
 }
 
-void interpretKnob(uint8_t index, bool force, bool inhibit, uint16_t readValue)
+void updateKnob(uint8_t index, bool inhibit)
 {
-  boolean isPotMoving; // If the potentiometer is moving
+  uint16_t readValue = getKnobValue(index);
 
-  currentPotsState[index] = readValue;
-  currentMidiState[index] = readValue;
-
-  // Calculates the absolute value between the difference between the current and previous state of the pot
-  if (abs(currentPotsState[index] - previousPotsState[index]) > variationThreshold)
-  {                                 // Opens the gate if the potentiometer variation is greater than the threshold
-    prevoiusTime[index] = millis(); // Stores the previous time
-  }
-
-  potReadingResetTimer[index] = millis() - prevoiusTime[index]; // Resets the potReadingResetTimer 11000 - 11000 = 0ms
-
-  if (potReadingResetTimer[index] < TIMEOUT)
-  { // If the potReadingResetTimer is less than the maximum allowed time it means that the potentiometer is still moving
-    isPotMoving = true;
-  }
-  else
+  if (
+      readValue != emittedValue[index][0] &&
+      readValue != emittedValue[index][1] &&
+      readValue != emittedValue[index][2] &&
+      readValue != emittedValue[index][3] &&
+      !inhibit)
   {
-    isPotMoving = false;
-  }
-
-  if (isPotMoving == true)
-  { // If the potentiometer is still moving, send the change control
-    if (previousMidiState[index] != currentMidiState[index])
+    if (activePreset.knobInfo[index].NRPN == 0)
     {
+
       uint8_t knobChannel = activePreset.knobInfo[index].CHANNEL & 0x7f;
       if (knobChannel > 0 && knobChannel < 17)
       {
-        sendCCMessage(activePreset.knobInfo[index].MSB, activePreset.knobInfo[index].LSB, currentMidiState[index], knobChannel);
+        sendCCMessage(activePreset.knobInfo[index].MSB, activePreset.knobInfo[index].LSB, readValue, knobChannel);
       }
       else if (knobChannel == 0)
       {
-        sendCCMessage(activePreset.knobInfo[index].MSB, activePreset.knobInfo[index].LSB, currentMidiState[index], activePreset.channel);
+        sendCCMessage(activePreset.knobInfo[index].MSB, activePreset.knobInfo[index].LSB, readValue, activePreset.channel);
       }
-
-      previousPotsState[index] = currentPotsState[index]; // Stores the current reading of the potentiometer to compare with the next
-      previousMidiState[index] = currentMidiState[index];
+    }
+    else
+    {
+      sendNRPM(activePreset.knobInfo[index].MSB, activePreset.knobInfo[index].LSB, readValue, activePreset.channel);
     }
   }
+  for (uint8_t i = 3; i > 0; i--)
+  {
+    emittedValue[index][i] = emittedValue[index][i - 1];
+  }
+  emittedValue[index][0] = readValue;
 }
 
 void sendCCMessage(uint8_t MSB, uint8_t LSB, uint16_t value, uint8_t channel)
 {
   if (activePreset.highResolution)
   {
-#ifdef MK2
-    value = 1023 - value;
-#endif
-    unsigned int shiftedValue = map(value, 0, 1023, 0, 16383);
+    uint16_t shiftedValue = map(value, 0, 1023, 0, 16383);
     MIDICoreSerial.sendControlChange(MSB, shiftedValue >> 7, channel);
     MIDICoreSerial.sendControlChange(LSB, lowByte(shiftedValue) >> 1, channel);
 
     MIDICoreUSB.sendControlChange(MSB, shiftedValue >> 7, channel);
     MIDICoreUSB.sendControlChange(LSB, lowByte(shiftedValue) >> 1, channel);
-    n32b_display.showValue(shiftedValue >> 7);
+    // n32b_display.showValue(shiftedValue >> 7);
   }
   else
   {
-    // uint8_t lowResSend = map(value, 0, 1023, 0, 127);
-    MIDICoreSerial.sendControlChange(MSB, value, channel);
-    MIDICoreUSB.sendControlChange(MSB, value, channel);
-    n32b_display.showValue(value);
+    MIDICoreSerial.sendControlChange(MSB, value >> 3, channel);
+    MIDICoreUSB.sendControlChange(MSB, value >> 3, channel);
+    // n32b_display.showValue(value);
   }
+  n32b_display.blinkDot(1);
 }
 
-void sendNRPM(uint8_t NRPNNumberMSB, uint8_t NRPNNumberLSB, int16_t value, uint8_t channel)
+void sendNRPM(uint8_t NRPNNumberMSB, uint8_t NRPNNumberLSB, uint16_t value, uint8_t channel)
 {
-  unsigned int shiftedValue = map(value, 0, 1023, 0, 16383) << 1;
+  // uint16_t shiftedValue = map(value, 0, 1023, 0, 16383) << 1;
+  uint16_t shiftedValue = map(value, 0, 1023, 0, 16383);
 
   MIDICoreSerial.sendControlChange(99, NRPNNumberMSB & 0x7F, channel); // NRPN MSB
   MIDICoreUSB.sendControlChange(99, NRPNNumberMSB & 0x7F, channel);    // NRPN MSB
@@ -103,14 +93,15 @@ void sendNRPM(uint8_t NRPNNumberMSB, uint8_t NRPNNumberLSB, int16_t value, uint8
   MIDICoreSerial.sendControlChange(98, NRPNNumberLSB & 0x7F, channel); // NRPN LSB
   MIDICoreUSB.sendControlChange(98, NRPNNumberLSB & 0x7F, channel);    // NRPN LSB
 
-  MIDICoreSerial.sendControlChange(6, highByte(shiftedValue), channel); // Data Entry MSB
-  MIDICoreUSB.sendControlChange(6, highByte(shiftedValue), channel);    // Data Entry MSB
+  MIDICoreSerial.sendControlChange(6, shiftedValue >> 7, channel); // Data Entry MSB
+  MIDICoreUSB.sendControlChange(6, shiftedValue >> 7, channel);    // Data Entry MSB
 
   if (activePreset.highResolution)
   {
-    MIDICoreSerial.sendControlChange(38, lowByte(shiftedValue) >> 1, channel); // LSB for Control 6 (Data Entry)
-    MIDICoreUSB.sendControlChange(38, lowByte(shiftedValue) >> 1, channel);    // LSB for Control 6 (Data Entry)
+    MIDICoreSerial.sendControlChange(38, value >> 3, channel); // LSB for Control 6 (Data Entry)
+    MIDICoreUSB.sendControlChange(38, value >> 3, channel);    // LSB for Control 6 (Data Entry)
   }
+  n32b_display.blinkDot(1);
 }
 
 // Handles the "menu" system, what to do when the button is pressed
@@ -244,20 +235,13 @@ void doMidiRead()
   MIDICoreUSB.read();
 }
 
-// uint16_t getKnobValue(uint8_t index)
-// {
-//   uint16_t average = 0;
-//   for (uint8_t i = 0; i < 4; i++)
-//   {
-//     average += knobBuffer[i][index];
-//   }
-//   average /= 4;
-
-// #ifdef MK2
-//   return 1023 - average;
-// #endif
-
-// #ifndef MK2
-//   return average;
-// #endif
-// }
+uint16_t getKnobValue(uint8_t index)
+{
+  uint16_t average = 0;
+  for (uint8_t i = 0; i < 4; i++)
+  {
+    average += knobBuffer[index][i];
+  }
+  average /= 3;
+  return average;
+}

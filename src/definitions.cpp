@@ -60,15 +60,6 @@ const uint8_t CHANGE_CHANNEL = 9;         // Changes the global MIDI channel
 const uint8_t DISABLE_KNOB = 11;          // Disable
 const uint8_t HIGH_RES_14BIT = 14;        // Use 7-bit or 14-bit midi messages
 
-int currentPotsState[32] = {0};
-int previousPotsState[32] = {0};
-int currentMidiState[32] = {0};
-int previousMidiState[32] = {0};
-int variationThreshold = 6;
-unsigned long prevoiusTime[32] = {0};
-unsigned long potReadingResetTimer[32] = {0};
-unsigned int TIMEOUT = 300;
-
 // General definitions
 const uint8_t NUMBER_OF_KNOBS = 32;
 const uint8_t NUMBER_OF_PRESETS = 5;
@@ -77,10 +68,8 @@ const uint8_t NUMBER_OF_PRESETS = 5;
 byte currentPresetNumber = 0;
 Preset_t activePreset;
 
-// uint8_t NUMBER_OF_BUFFERS = 3;
-// unsigned int knobBuffer[3][32];
-// unsigned int averageValues[32];
-// unsigned int emittedValue[3][32];
+uint16_t knobBuffer[32][4] = {0};
+uint16_t emittedValue[32][4] = {0};
 
 /* Buttons variables */
 const unsigned int SHORT_PRESS_TIME = 600; // Milliseconds

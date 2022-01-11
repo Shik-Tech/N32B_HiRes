@@ -17,7 +17,7 @@ class MUX_FACTORY
 {
 public:
   MUX_FACTORY();
-  void init(uint8_t channel1, uint8_t channel2, uint8_t channel3, int8_t channel4);
+  void init(uint8_t channel1, uint8_t channel2, uint8_t channel3, uint8_t channel4);
   void setSignalPin(bool muxIndex, uint8_t pin);
   void update(uint8_t);
   void setMultiplexer(uint8_t);
@@ -25,12 +25,10 @@ public:
   uint16_t readSingle(uint8_t);
 
 private:
-  uint8_t currentChannel;
   uint8_t channels[4];
   uint8_t signalPin[2];
-  // unsigned long timeout;
-  // void readSingle(uint8_t);
   void read();
+  // unsigned long timeout;
 };
 
 #endif

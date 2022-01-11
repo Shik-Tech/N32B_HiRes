@@ -91,13 +91,6 @@ void setup()
   // Load the last used preset as stored in EEPROM
   loadPreset(EEPROM.read(lastUsedPresetAddress));
 
-  // We don't want any incorrect data sent at startup so we fill the buffers
-  // for (uint8_t i = 0; i < NUMBER_OF_KNOBS; i++)
-  // {
-  //   updateKnob(i);                 // Update the buffers
-  //   interpretKnob(i, false, true); // Fill the emission buffers but do not send midi data
-  // }
-
   /* Set callbacks */
   MIDICoreUSB.setHandleMessage(onUsbMessage);
   MIDICoreSerial.setHandleMessage(onSerialMessage);
@@ -123,13 +116,12 @@ void setup()
   // n32b_display.showStartUpAnimation();
   // n32b_display.showChannelNumber(activePreset.channel);
 }
-
 void loop()
 {
   for (uint8_t currentKnob = 0; currentKnob < NUMBER_OF_KNOBS; currentKnob++)
   {
-    muxFactory.setMultiplexer(currentKnob);
-    interpretKnob(currentKnob, false, inhibitMidi, muxFactory.readSingle(currentKnob));
+    muxFactory.update(currentKnob);
+    updateKnob(currentKnob, inhibitMidi);
   }
   doMidiRead();
 
