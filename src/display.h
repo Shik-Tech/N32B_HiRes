@@ -16,10 +16,9 @@ public:
   N32B_DISPLAY(int NO_OF_DRIVERS, int LEDMATRIX_CS_PIN) : LEDMatrixDriver(NO_OF_DRIVERS, LEDMATRIX_CS_PIN){};
 
   // Auto clear the display
-  void updateDisplay(uint8_t readInterval = 255);
+  void updateDisplay(uint8_t readInterval = 150);
 
-  void printEachDigit(int);
-  void showValue(int);
+  void showValue(uint8_t);
   void blinkDot(uint8_t);
   void showChannelNumber(uint8_t);
   void showPresetNumber(byte);

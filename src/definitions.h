@@ -83,14 +83,14 @@ struct Preset_t
 {
 
   // channel the device is sending on
-  uint8_t channel;
+  midi::Channel channel;
 
   // Knob settings structure
   struct Knob_t
   {
     uint8_t MSB;
     uint8_t LSB;
-    uint8_t CHANNEL;
+    midi::Channel CHANNEL;
     bool NRPN;
     // bool RPN;
   } knobInfo[32];
@@ -103,18 +103,16 @@ struct Preset_t
 extern byte currentPresetNumber;
 extern Preset_t activePreset;
 
-extern uint8_t knobBuffer[32][2][4];
-extern uint8_t emittedValue[32][8];
+extern uint8_t knobBuffer[32][2][3];
+extern uint8_t emittedValue[32][9];
 
 /* Buttons variables */
-extern const unsigned int SHORT_PRESS_TIME; // Milliseconds
-extern const unsigned int LONG_PRESS_TIME;  // Milliseconds
+extern const uint8_t SHORT_PRESS_TIME; // Milliseconds
 extern unsigned long pressedTime;
 extern bool isPressingAButton;
 extern bool isPressingBButton;
 
 /* Mode variables */
-extern bool startUp;
 extern bool isPresetMode;
 extern bool inhibitMidi;
 

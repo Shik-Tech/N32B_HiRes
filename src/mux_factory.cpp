@@ -29,7 +29,7 @@ void MUX_FACTORY::setSignalPin(bool muxIndex, uint8_t pin)
 void MUX_FACTORY::update(uint8_t currentKnob)
 {
     setMultiplexer(currentKnob);
-    for (uint8_t i = 3; i > 0; i--)
+    for (uint8_t i = 2; i > 0; i--)
     {
         knobBuffer[currentKnob][0][i] = knobBuffer[currentKnob][0][i - 1];
         knobBuffer[currentKnob][1][i] = knobBuffer[currentKnob][1][i - 1];

@@ -30,9 +30,9 @@ void updateKnob(uint8_t index, bool inhibit)
   uint8_t readMSBValue = getKnobValue(index, false);
   uint8_t readLSBValue = getKnobValue(index, true);
   bool isMoving = true;
-  for (uint8_t i = 0; i < 8; i++)
+  for (uint8_t i = 0; i < 9; i++)
   {
-    isMoving = isMoving & readLSBValue != emittedValue[index][i];
+    isMoving = isMoving & (readLSBValue != emittedValue[index][i]);
   }
   if (isMoving && !inhibit)
   {
@@ -52,7 +52,7 @@ void updateKnob(uint8_t index, bool inhibit)
     {
       sendNRPM(activePreset.knobInfo[index].MSB, activePreset.knobInfo[index].LSB, readMSBValue, readLSBValue, activePreset.channel);
     }
-    for (uint8_t i = 7; i > 0; i--)
+    for (uint8_t i = 8; i > 0; i--)
     {
       emittedValue[index][i] = emittedValue[index][i - 1];
     }
@@ -69,22 +69,19 @@ void sendCCMessage(uint8_t MSB, uint8_t LSB, uint8_t MSBvalue, uint8_t LSBvalue,
 
     MIDICoreUSB.sendControlChange(MSB, MSBvalue, channel);
     MIDICoreUSB.sendControlChange(LSB, LSBvalue, channel);
-    n32b_display.showValue(MSBvalue);
+    // n32b_display.showValue(MSBvalue);
   }
   else
   {
     MIDICoreSerial.sendControlChange(MSB, MSBvalue, channel);
     MIDICoreUSB.sendControlChange(MSB, MSBvalue, channel);
-    n32b_display.showValue(MSBvalue);
+    // n32b_display.showValue(MSBvalue);
   }
-  // n32b_display.blinkDot(1);
+  n32b_display.blinkDot(1);
 }
 
 void sendNRPM(uint8_t NRPNNumberMSB, uint8_t NRPNNumberLSB, uint8_t MSBvalue, uint8_t LSBvalue, uint8_t channel)
 {
-  // uint16_t shiftedValue = map(value, 0, 1023, 0, 16383) << 1;
-  // uint16_t shiftedValue = map(value, 0, 1023, 0, 16383);
-
   MIDICoreSerial.sendControlChange(99, NRPNNumberMSB & 0x7F, channel); // NRPN MSB
   MIDICoreUSB.sendControlChange(99, NRPNNumberMSB & 0x7F, channel);    // NRPN MSB
 
@@ -102,10 +99,8 @@ void sendNRPM(uint8_t NRPNNumberMSB, uint8_t NRPNNumberLSB, uint8_t MSBvalue, ui
   n32b_display.blinkDot(1);
 }
 
-// Handles the "menu" system, what to do when the button is pressed
 void changeChannel(bool direction)
 {
-  // inhibitMidi = true;
   if (direction)
   {
     // Next Channel
@@ -116,6 +111,7 @@ void changeChannel(bool direction)
   }
   else
   {
+    // Previous Channel
     if (activePreset.channel > 1)
       activePreset.channel--;
     else
@@ -147,14 +143,7 @@ void changePreset(bool direction)
 
 void buttonReleaseAction(bool direction)
 {
-  if (direction)
-  {
-    isPressingAButton = false;
-  }
-  else
-  {
-    isPressingBButton = false;
-  }
+  direction ? isPressingAButton = false : isPressingBButton = false;
 
   if (millis() - pressedTime < SHORT_PRESS_TIME)
   {
@@ -212,7 +201,9 @@ void renderButtonFunctions()
   }
 
   // Switch between channelMode and presetMode
-  if ((isPressingAButton || isPressingBButton) && (millis() - pressedTime > LONG_PRESS_TIME))
+  if (
+      (isPressingAButton || isPressingBButton) &&
+      (millis() - pressedTime > (unsigned int)(SHORT_PRESS_TIME << 2)))
   {
     if (isPressingAButton)
     {
@@ -236,10 +227,9 @@ void doMidiRead()
 uint8_t getKnobValue(uint8_t index, bool isLSB)
 {
   uint16_t average = 0;
-  for (uint8_t i = 0; i < 4; i++)
+  for (uint8_t i = 0; i < 3; i++)
   {
     average += knobBuffer[index][isLSB][i];
   }
-  average /= 4;
-  return average;
+  return average / 3;
 }

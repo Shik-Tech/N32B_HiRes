@@ -68,12 +68,11 @@ const uint8_t NUMBER_OF_PRESETS = 5;
 byte currentPresetNumber = 0;
 Preset_t activePreset;
 
-uint8_t knobBuffer[32][2][4] = {0};
-uint8_t emittedValue[32][8] = {0};
+uint8_t knobBuffer[32][2][3] = {0};
+uint8_t emittedValue[32][9] = {0};
 
 /* Buttons variables */
-const unsigned int SHORT_PRESS_TIME = 600; // Milliseconds
-const unsigned int LONG_PRESS_TIME = 1000; // Milliseconds
+const uint8_t SHORT_PRESS_TIME = 255; // Milliseconds
 unsigned long pressedTime = 0;
 bool isPressingAButton = false;
 bool isPressingBButton = false;

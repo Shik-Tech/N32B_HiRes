@@ -18,7 +18,7 @@ void N32B_DISPLAY::updateDisplay(uint8_t readInterval)
     }
 }
 
-void N32B_DISPLAY::showValue(int value)
+void N32B_DISPLAY::showValue(uint8_t value)
 {
     setDigit(1, 15);
     int number = value;
