@@ -27,7 +27,6 @@ public:
 private:
   uint8_t channels[4];
   uint8_t signalPin[2];
-  void read();
 };
 
 #endif

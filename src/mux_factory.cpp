@@ -35,17 +35,6 @@ void MUX_FACTORY::update(uint8_t currentKnob)
         knobBuffer[currentKnob][1][i] = knobBuffer[currentKnob][1][i - 1];
     }
     uint16_t shiftedValue = map(readSingle(currentKnob), 0, 1023, 0, 16383);
-    // Serial.print(shiftedValue);
-    // Serial.print(" :: ");
-    // Serial.print(shiftedValue >> 7);
-    // Serial.print(" :: ");
-    // Serial.println(highByte(shiftedValue));
-    // if (currentKnob == 19)
-    // {
-    //     Serial.println(lowByte(shiftedValue) >> 1);
-    //     Serial.println("----");
-    // }
-    // delay(100);
     knobBuffer[currentKnob][0][0] = shiftedValue >> 7;          // MSB
     knobBuffer[currentKnob][1][0] = lowByte(shiftedValue) >> 1; // LSB
 }
@@ -62,7 +51,6 @@ void MUX_FACTORY::setMultiplexer(uint8_t currentKnob)
     {
         digitalWrite(channels[i], bitRead(currentKnob, i));
     }
-    delay(1);
 }
 
 uint8_t MUX_FACTORY::getKnobValue(uint8_t index, bool isMSB)

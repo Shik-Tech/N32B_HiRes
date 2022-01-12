@@ -104,7 +104,7 @@ extern byte currentPresetNumber;
 extern Preset_t activePreset;
 
 extern uint8_t knobBuffer[32][2][4];
-extern uint8_t emittedValue[32][6];
+extern uint8_t emittedValue[32][8];
 
 /* Buttons variables */
 extern const unsigned int SHORT_PRESS_TIME; // Milliseconds

@@ -29,15 +29,12 @@ void updateKnob(uint8_t index, bool inhibit)
 {
   uint8_t readMSBValue = getKnobValue(index, false);
   uint8_t readLSBValue = getKnobValue(index, true);
-
-  if (
-      (readLSBValue != emittedValue[index][0] &&
-       readLSBValue != emittedValue[index][1] &&
-       readLSBValue != emittedValue[index][2] &&
-       readLSBValue != emittedValue[index][3] &&
-       readLSBValue != emittedValue[index][4] &&
-       readLSBValue != emittedValue[index][5]) &&
-      !inhibit)
+  bool isMoving = true;
+  for (uint8_t i = 0; i < 8; i++)
+  {
+    isMoving = isMoving & readLSBValue != emittedValue[index][i];
+  }
+  if (isMoving && !inhibit)
   {
     if (activePreset.knobInfo[index].NRPN == 0)
     {
@@ -55,7 +52,7 @@ void updateKnob(uint8_t index, bool inhibit)
     {
       sendNRPM(activePreset.knobInfo[index].MSB, activePreset.knobInfo[index].LSB, readMSBValue, readLSBValue, activePreset.channel);
     }
-    for (uint8_t i = 5; i > 0; i--)
+    for (uint8_t i = 7; i > 0; i--)
     {
       emittedValue[index][i] = emittedValue[index][i - 1];
     }
