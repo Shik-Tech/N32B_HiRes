@@ -19,7 +19,6 @@ void MUX_FACTORY::init(uint8_t channel1, uint8_t channel2, uint8_t channel3, uin
         pinMode(channels[i], OUTPUT);
     }
     delay(10);
-    // timeout = millis();
 }
 void MUX_FACTORY::setSignalPin(bool muxIndex, uint8_t pin)
 {
@@ -29,25 +28,32 @@ void MUX_FACTORY::setSignalPin(bool muxIndex, uint8_t pin)
 
 void MUX_FACTORY::update(uint8_t currentKnob)
 {
-    // if (millis() - timeout >= 1)
-    // {
     setMultiplexer(currentKnob);
     for (uint8_t i = 3; i > 0; i--)
     {
-        knobBuffer[currentKnob][i] = knobBuffer[currentKnob][i - 1];
+        knobBuffer[currentKnob][0][i] = knobBuffer[currentKnob][0][i - 1];
+        knobBuffer[currentKnob][1][i] = knobBuffer[currentKnob][1][i - 1];
     }
-    knobBuffer[currentKnob][0] = readSingle(currentKnob);
-
-    // timeout = millis();
+    uint16_t shiftedValue = map(readSingle(currentKnob), 0, 1023, 0, 16383);
+    // Serial.print(shiftedValue);
+    // Serial.print(" :: ");
+    // Serial.print(shiftedValue >> 7);
+    // Serial.print(" :: ");
+    // Serial.println(highByte(shiftedValue));
+    // if (currentKnob == 19)
+    // {
+    //     Serial.println(lowByte(shiftedValue) >> 1);
+    //     Serial.println("----");
     // }
+    // delay(100);
+    knobBuffer[currentKnob][0][0] = shiftedValue >> 7;          // MSB
+    knobBuffer[currentKnob][1][0] = lowByte(shiftedValue) >> 1; // LSB
 }
 
 uint16_t MUX_FACTORY::readSingle(uint8_t currentKnob)
 {
-    uint8_t bitReducer = activePreset.highResolution ? 0 : 3;
     bool pinSelector = currentKnob > 15 ? 1 : 0;
-
-    return analogRead(signalPin[pinSelector]) >> bitReducer;
+    return analogRead(signalPin[pinSelector]);
 }
 
 void MUX_FACTORY::setMultiplexer(uint8_t currentKnob)
@@ -56,4 +62,16 @@ void MUX_FACTORY::setMultiplexer(uint8_t currentKnob)
     {
         digitalWrite(channels[i], bitRead(currentKnob, i));
     }
+    delay(1);
+}
+
+uint8_t MUX_FACTORY::getKnobValue(uint8_t index, bool isMSB)
+{
+    uint16_t average = 0;
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        average += knobBuffer[index][isMSB][i];
+    }
+    average /= 4;
+    return average;
 }

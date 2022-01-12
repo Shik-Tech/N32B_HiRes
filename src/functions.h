@@ -22,8 +22,8 @@ void onSerialMessage(const midi::Message<128> &);
 
 void updateKnob(uint8_t, bool);
 
-void sendCCMessage(uint8_t, uint8_t, uint16_t, uint8_t);
-void sendNRPM(uint8_t, uint8_t, uint16_t, uint8_t);
+void sendCCMessage(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+void sendNRPM(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
 
 void changeChannel(bool);
 void changePreset(bool);
@@ -34,6 +34,6 @@ void renderButtonFunctions();
 
 void doMidiRead();
 
-uint16_t getKnobValue(uint8_t);
+uint8_t getKnobValue(uint8_t, bool);
 
 #endif
