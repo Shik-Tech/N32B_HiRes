@@ -22,7 +22,7 @@ public:
   void update(uint8_t);
   void setMultiplexer(uint8_t);
   uint8_t getKnobValue(uint8_t, bool);
-  uint16_t readSingle(uint8_t);
+  uint16_t read(uint8_t);
 
 private:
   uint8_t channels[4];

@@ -74,7 +74,7 @@ void loadPreset(uint8_t presetNumber)
 
     // Update the last used preset
     currentPresetNumber = presetNumber;
-    // n32b_display.showPresetNumber(presetNumber);
+    n32b_display.showPresetNumber(presetNumber);
 
     // Save current preset as the active preset.
     // Is commented out to prevent EEPROM from over used

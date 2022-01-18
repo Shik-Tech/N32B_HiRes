@@ -29,10 +29,10 @@ void MUX_FACTORY::setSignalPin(bool muxIndex, uint8_t pin)
 void MUX_FACTORY::update(uint8_t currentKnob)
 {
     setMultiplexer(currentKnob);
-    knobValues[currentKnob][0] = (EMA_a * readSingle(currentKnob)) + ((1 - EMA_a) * knobValues[currentKnob][0]);
+    knobValues[currentKnob][0] = (EMA_a * read(currentKnob)) + ((1 - EMA_a) * knobValues[currentKnob][0]);
 }
 
-uint16_t MUX_FACTORY::readSingle(uint8_t currentKnob)
+uint16_t MUX_FACTORY::read(uint8_t currentKnob)
 {
     bool pinSelector = currentKnob > 15 ? 1 : 0;
     return analogRead(signalPin[pinSelector]);
