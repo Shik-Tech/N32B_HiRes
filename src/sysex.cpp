@@ -1,8 +1,8 @@
 /*
-  N32B Hi Res Firmware v3.0.2
+  N32B Hi Res Firmware v3.5.0
   MIT License
 
-  Copyright (c) 2021 SHIK
+  Copyright (c) 2022 SHIK
 */
 
 #include "sysex.h"
@@ -54,72 +54,6 @@ void processSysex(unsigned char *data, unsigned int size)
         {
             // sendCurrentConfig();
         }
-
-        // switch (data[COMMAND])
-        // {
-        // case SET_KNOB_AS_CC:
-        // {
-        //     setKnobAsCC(data[KNOB_INDEX], data[MSB_INDEX], data[LSB_INDEX]);
-        //     break;
-        // }
-
-        // case SET_KNOB_AS_CC_CHANNEL:
-        // {
-        //     setKnobAsCCWithChannel(data[KNOB_INDEX], data[MSB_INDEX], data[LSB_INDEX], data[CHANNEL_INDEX]);
-        //     break;
-        // }
-
-        // case SET_KNOB_AS_NRPN:
-        // {
-        //     setKnobAsNRPN(data[KNOB_INDEX], data[MSB_INDEX], data[LSB_INDEX]);
-        //     break;
-        // }
-
-        // case DISABLE_KNOB:
-        // {
-        //     setKnobAsDisabled(data[KNOB_INDEX]);
-        //     break;
-        // }
-
-        // case HIGH_RES_14BIT:
-        // {
-        //     useHighResolution(data[KNOB_INDEX]);
-        //     break;
-        // }
-
-        // case SAVE_PRESET:
-        // {
-        //     savePreset(data[KNOB_INDEX]);
-        //     break;
-        // }
-
-        // case LOAD_PRESET:
-        // {
-        //     loadPreset(data[KNOB_INDEX]);
-        //     break;
-        // }
-
-        // case SYNC_KNOBS:
-        // {
-        //     for (uint8_t i = 0; i < NUMBER_OF_KNOBS; i++)
-        //     {
-        //         interpretKnob(i, true, false);
-        //     }
-        //     break;
-        // }
-
-        // case CHANGE_CHANNEL:
-        // {
-        //     handleChangeChannel(data[KNOB_INDEX]);
-        //     break;
-        // }
-
-        // case SEND_CURRENT_CONFIG:
-        // {
-        //     // sendCurrentConfig();
-        //     break;
-        // }
-        // }
     }
     else
     {

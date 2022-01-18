@@ -1,8 +1,8 @@
 /*
-  N32B Hi Res Firmware v3.0.2
+  N32B Hi Res Firmware v3.5.0
   MIT License
 
-  Copyright (c) 2021 SHIK
+  Copyright (c) 2022 SHIK
 */
 
 #include "definitions.h"
@@ -11,7 +11,6 @@ USBMIDI_CREATE_INSTANCE(0, MIDICoreUSB);
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDICoreSerial);
 
 MUX_FACTORY muxFactory;
-
 N32B_DISPLAY n32b_display(16, 10, 15);
 
 ezButton buttonA(BUTTON_A_PIN);
@@ -36,8 +35,8 @@ const unsigned int reset_timeout = 4000;
 // Change these any time the data structure of a preset changed
 // This will trigger reformatting on the next startup
 const uint8_t MAJOR_VERSION = 3;
-const uint8_t MINOR_VERSION = 0;
-const uint8_t POINT_VERSION = 2;
+const uint8_t MINOR_VERSION = 5;
+const uint8_t POINT_VERSION = 0;
 
 // SYSEX constants
 const uint8_t SHIK_MANUFACTURER_ID = 32;
@@ -78,9 +77,7 @@ bool isPressingAButton = false;
 bool isPressingBButton = false;
 
 /* Mode variables */
-bool startUp = true;
 bool isPresetMode = false;
 
-bool wasFactoryReset = false;
 // byte index in EEPROM for the last used preset
 uint8_t lastUsedPresetAddress = 0;

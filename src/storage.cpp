@@ -1,8 +1,8 @@
 /*
-  N32B Hi Res Firmware v3.0.2
+  N32B Hi Res Firmware v3.5.0
   MIT License
 
-  Copyright (c) 2021 SHIK
+  Copyright (c) 2022 SHIK
 */
 
 #include "storage.h"
@@ -16,7 +16,7 @@ bool isEEPROMvalid()
   byte2 = EEPROM.read(EEPROM.length() - 2);
   byte3 = EEPROM.read(EEPROM.length() - 1);
 
-  // Is it the first time the device was powered on
+  // Check device version
   return ((byte1 == MAJOR_VERSION) && (byte2 == MINOR_VERSION) && (byte3 == POINT_VERSION));
 }
 
@@ -28,17 +28,7 @@ void formatFactory()
   // Create default preset
   Preset_t defaultPreset;
   defaultPreset.channel = 1;
-  // #ifdef MK2
-  //   for (uint8_t indexId = 0; indexId < 32; indexId++)
-  //   {
-  //     defaultPreset.knobInfo[indexId].MSB = indexId;
-  //     defaultPreset.knobInfo[indexId].LSB = indexId + 32;
-  //     defaultPreset.knobInfo[indexId].NRPN = 0;
-  //     defaultPreset.knobInfo[indexId].CHANNEL = 128;
-  //   }
-  // #endif
 
-  // #ifndef MK2
   uint8_t knobsLocation[32] = {
       15, 14, 12, 9, 31, 24, 20, 16,
       13, 11, 10, 2, 30, 25, 21, 17,
@@ -51,11 +41,10 @@ void formatFactory()
     defaultPreset.knobInfo[knobsLocation[indexId]].NRPN = 0;
     defaultPreset.knobInfo[knobsLocation[indexId]].CHANNEL = 128;
   }
-  // #endif
 
   defaultPreset.highResolution = 1;
 
-  // Write the default preset to all preset slots, byte by byte
+  // Write the default preset to all preset slots
   uint16_t baseAddress = 1;
   for (uint8_t p = 0; p < NUMBER_OF_PRESETS; p++)
   {
@@ -77,7 +66,7 @@ void loadPreset(uint8_t presetNumber)
   if (presetNumber < 5)
   {
     uint16_t baseAddress = 1 + (presetNumber * sizeof(Preset_t));
-    // Read the active preset from EEPROM; byte by byte
+    // Read the active preset from EEPROM
     for (uint16_t byteIndex = 0; byteIndex < sizeof(Preset_t); byteIndex++)
     {
       ((uint8_t *)(&activePreset))[byteIndex] = EEPROM.read(baseAddress + byteIndex);
@@ -99,7 +88,7 @@ void savePreset(uint8_t presetNumber)
   {
     uint16_t baseAddress = presetNumber * sizeof(Preset_t) + 1;
 
-    // write the active preset to EEPROM; byte by byte
+    // write the active preset to EEPROM
     for (uint16_t byteIndex = 0; byteIndex < sizeof(Preset_t); byteIndex++)
     {
       EEPROM.update(baseAddress + byteIndex, ((uint8_t *)(&activePreset))[byteIndex]);

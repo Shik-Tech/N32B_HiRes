@@ -1,8 +1,8 @@
 /*
-  N32B Hi Res Firmware v3.0.2
+  N32B Hi Res Firmware v3.5.0
   MIT License
 
-  Copyright (c) 2021 SHIK
+  Copyright (c) 2022 SHIK
 */
 
 /*
@@ -75,10 +75,7 @@ extern const uint8_t HIGH_RES_14BIT;         // Use 7-bit or 14-bit midi message
 extern const uint8_t NUMBER_OF_KNOBS;
 extern const uint8_t NUMBER_OF_PRESETS;
 
-/*
-*  A preset stores all the information that
-*  define how the device operates
-*/
+// A preset struct is defining the device preset structure
 struct Preset_t
 {
 
@@ -102,7 +99,6 @@ struct Preset_t
 /* Device setup data */
 extern byte currentPresetNumber;
 extern Preset_t activePreset;
-
 extern uint16_t knobValues[32][2];
 extern float EMA_a; // EMA alpha
 
@@ -115,7 +111,6 @@ extern bool isPressingBButton;
 /* Mode variables */
 extern bool isPresetMode;
 
-extern bool wasFactoryReset;
 // byte index in EEPROM for the last used preset
 extern uint8_t lastUsedPresetAddress;
 

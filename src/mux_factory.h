@@ -1,8 +1,8 @@
 /*
-  N32B Hi Res Firmware v3.0.2
+  N32B Hi Res Firmware v3.5.0
   MIT License
 
-  Copyright (c) 2021 SHIK
+  Copyright (c) 2022 SHIK
 */
 
 #include <Arduino.h>

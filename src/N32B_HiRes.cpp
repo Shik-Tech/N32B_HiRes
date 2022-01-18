@@ -1,11 +1,10 @@
 /*
-  N32B Hi Res Firmware v3.0.2
+  N32B Hi Res Firmware v3.5.0
   MIT License
 
-  Copyright (c) 2021 SHIK
+  Copyright (c) 2022 SHIK
 */
 
-/* Libraries */
 #include <Arduino.h>
 
 #include "definitions.h"
@@ -14,14 +13,6 @@
 
 void setup()
 {
-  // n32b_display.setIntensity(0); // 0 = min, 15 = max
-  // n32b_display.setScanLimit(1); // 0-7: Show 1-8 digits. Beware of currenct restrictions for 1-3 digits! See datasheet.
-  // n32b_display.setDecode(0xFF); // Enable "BCD Type B" decoding for all digits.
-  // n32b_display.setEnabled(true);
-  // n32b_display.setDigit(0, 15);
-  // n32b_display.setDigit(1, 15);
-  // n32b_display.display();
-
   n32b_display.setBright(0);
   n32b_display.setDigitLimit(2);
 
@@ -115,9 +106,7 @@ void setup()
   MIDICoreUSB.sendRealTime((midi::MidiType)0xFE);
   MIDICoreSerial.sendRealTime((midi::MidiType)0xFE);
 
-  /* Show factory reset animation */
   n32b_display.showStartUpAnimation();
-  // n32b_display.showChannelNumber(activePreset.channel);
 }
 
 void loop()
