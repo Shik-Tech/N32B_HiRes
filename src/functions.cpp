@@ -10,7 +10,7 @@
 void onUsbMessage(const midi::Message<128> &message)
 {
   MIDICoreSerial.send(message);
-  n32b_display.blinkDot(0);
+  n32b_display.blinkDot(2);
 }
 
 void onSerialMessage(const midi::Message<128> &message)
@@ -19,7 +19,7 @@ void onSerialMessage(const midi::Message<128> &message)
   if (MIDICoreSerial.getType() != midi::MidiType::ActiveSensing)
   {
     MIDICoreUSB.send(message.type, message.data1, message.data2, message.channel);
-    n32b_display.blinkDot(0);
+    n32b_display.blinkDot(2);
   }
 }
 

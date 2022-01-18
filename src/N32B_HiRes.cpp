@@ -24,7 +24,7 @@ void setup()
 
   n32b_display.setBright(0);
   n32b_display.setDigitLimit(2);
-  
+
   muxFactory.init(MUX_S0, MUX_S1, MUX_S2, MUX_S3);
   muxFactory.setSignalPin(0, MUX_A_SIG);
   muxFactory.setSignalPin(1, MUX_B_SIG);
@@ -114,12 +114,6 @@ void setup()
   // Send an Active Sensing MIDI message to notify the target that the controller is on the bus
   MIDICoreUSB.sendRealTime((midi::MidiType)0xFE);
   MIDICoreSerial.sendRealTime((midi::MidiType)0xFE);
-
-  for (uint8_t currentKnob = 0; currentKnob < NUMBER_OF_KNOBS; currentKnob++)
-  {
-    muxFactory.update(currentKnob);
-    updateKnob(currentKnob, true);
-  }
 
   /* Show factory reset animation */
   n32b_display.showStartUpAnimation();

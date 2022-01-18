@@ -14,9 +14,6 @@ void N32B_DISPLAY::updateDisplay(uint8_t readInterval)
 {
     if (millis() - displayOffTimer >= readInterval)
     {
-        // setDigit(0, 15);
-        // setDigit(1, 15);
-        // display();
         clear();
     }
 }
@@ -28,7 +25,7 @@ void N32B_DISPLAY::showValue(uint8_t value)
     printDigit(value);
     if (value > 99)
     {
-        write(1, chars[value % 10] | 0x80);
+        write(1, chars[value % 10] | B10000000);
     }
 
     // setBright(map(value, 0, 127, 0, 15));
@@ -38,28 +35,12 @@ void N32B_DISPLAY::showValue(uint8_t value)
 // Blink the decimal points
 void N32B_DISPLAY::blinkDot(uint8_t dotSide)
 {
-    // setIntensity(0);
-    // setDigit(!dotSide, 15, true); // 15 = blank
-    // setDigit(dotSide, 15);        // 15 = blank
-    // display();
+    write(dotSide, B10000000);
     displayOffTimer = millis();
 }
 
 void N32B_DISPLAY::showChannelNumber(uint8_t channelNumber)
 {
-    if (channelNumber < 10)
-    {
-        // setDigit(0, channelNumber);
-        // setDigit(1, 15); // 15 = blank
-    }
-    else
-    {
-        // setDigit(0, channelNumber % 10);
-        // setDigit(1, 1);
-    }
-
-    // display();
-
     printDigit(channelNumber);
     displayOffTimer = millis();
 }
@@ -69,7 +50,9 @@ void N32B_DISPLAY::showPresetNumber(byte presetNumber)
     // setDigit(1, 14); // "P"
     // setDigit(0, presetNumber);
     // display();
-
+    clear();
+    printDigit(presetNumber);
+    write(2, B01100111);
     displayOffTimer = millis();
 }
 
@@ -77,55 +60,28 @@ void N32B_DISPLAY::showStartUpAnimation()
 {
     // setDigit(0, B00001000);
     // display();
+
+    uint8_t delayTime = 160;
+    uint8_t repeats = 5;
+    for (uint8_t i = 0; i < repeats; i++)
+    {
+        write(1, B00000001);
+        write(2, B00001000);
+
+        delay(delayTime);
+        clear();
+
+        write(1, B01000000);
+        write(2, B00000001);
+        delay(delayTime);
+        clear();
+
+        write(1, B00001000);
+        write(2, B01000000);
+        delay(delayTime);
+        clear();
+    }
     displayOffTimer = millis();
-    delay(2000);
-    // int x = 0, y = 0; // start top left
-    // bool s = true;    // start with led on
-    // for (int i = 0; i < 10; i++)
-    // {
-
-    //     // toggle current pixel in framebuffer
-    //     setPixel(x, y, s);
-
-    //     // move to next pixel
-    //     if (x++ >= 16)
-    //     {
-    //         // Return to left
-    //         x = 0;
-
-    //         // start new line
-    //         if (y++ >= 8)
-    //         {
-    //             y = 0;  // need to return to start
-    //             s = !s; // toggle led state
-    //         }
-    //     }
-
-    //     // Flush framebuffer
-    //     display();
-
-    //     delay(200);
-    // }
-    // uint8_t delayTime = 175;
-    // uint8_t repeats = 8;
-    // for (uint8_t i = 0; i < repeats; i++)
-    // {
-    //     // display.write(1, B00001000);
-    //     // display.write(2, B00001000);
-
-    //     delay(delayTime);
-    //     clear();
-
-    //     // display.write(1, B00000001);
-    //     // display.write(2, B00000001);
-    //     delay(delayTime);
-    //     clear();
-
-    //     // display.write(1, B01000000);
-    //     // display.write(2, B01000000);
-    //     delay(delayTime);
-    //     clear();
-    // }
 }
 
 // Show animation after factory reset (infinity sign animation)
@@ -136,46 +92,46 @@ void N32B_DISPLAY::factoryResetAnimation()
 
     for (uint8_t i = 0; i < repeats; i++)
     {
-        // clear();
+        clear();
 
-        // // display.write(2, B00010000);
-        // delay(delayTime);
-        // clear();
+        write(2, B00010000);
+        delay(delayTime);
+        clear();
 
-        // // display.write(2, B00011000);
-        // delay(delayTime);
-        // clear();
+        write(2, B00011000);
+        delay(delayTime);
+        clear();
 
-        // // display.write(2, B00011100);
-        // delay(delayTime);
-        // clear();
+        write(2, B00011100);
+        delay(delayTime);
+        clear();
 
-        // // display.write(2, B00001101);
-        // delay(delayTime);
-        // clear();
+        write(2, B00001101);
+        delay(delayTime);
+        clear();
 
-        // // display.write(2, B00000101);
-        // // display.write(1, B00000001);
-        // delay(delayTime);
-        // clear();
+        write(2, B00000101);
+        write(1, B00000001);
+        delay(delayTime);
+        clear();
 
-        // // display.write(2, B00000001);
-        // // display.write(1, B00100001);
-        // delay(delayTime);
-        // clear();
+        write(2, B00000001);
+        write(1, B00100001);
+        delay(delayTime);
+        clear();
 
-        // // display.write(1, B01100001);
-        // delay(delayTime);
-        // clear();
+        write(1, B01100001);
+        delay(delayTime);
+        clear();
 
-        // // display.write(1, B01100010);
-        // delay(delayTime);
-        // clear();
+        write(1, B01100010);
+        delay(delayTime);
+        clear();
 
-        // // display.write(1, B01000010);
-        // // display.write(2, B00010000);
-        // delay(delayTime);
-        // clear();
+        write(1, B01000010);
+        write(2, B00010000);
+        delay(delayTime);
+        clear();
     }
 }
 
