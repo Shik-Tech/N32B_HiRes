@@ -12,7 +12,7 @@ MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDICoreSerial);
 
 MUX_FACTORY muxFactory;
 
-N32B_DISPLAY n32b_display(1, 10);
+N32B_DISPLAY n32b_display(16, 10, 15);
 
 ezButton buttonA(BUTTON_A_PIN);
 ezButton buttonB(BUTTON_B_PIN);
@@ -68,8 +68,8 @@ const uint8_t NUMBER_OF_PRESETS = 5;
 byte currentPresetNumber = 0;
 Preset_t activePreset;
 
-uint8_t knobBuffer[32][2][3] = {0};
-uint8_t emittedValue[32][9] = {0};
+uint16_t knobValues[32][2] = {0};
+float EMA_a = 0.4;
 
 /* Buttons variables */
 const uint8_t SHORT_PRESS_TIME = 255; // Milliseconds
@@ -80,7 +80,6 @@ bool isPressingBButton = false;
 /* Mode variables */
 bool startUp = true;
 bool isPresetMode = false;
-bool inhibitMidi = false;
 
 bool wasFactoryReset = false;
 // byte index in EEPROM for the last used preset

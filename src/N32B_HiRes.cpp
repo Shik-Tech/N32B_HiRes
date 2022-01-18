@@ -14,14 +14,17 @@
 
 void setup()
 {
-  n32b_display.setIntensity(0); // 0 = min, 15 = max
-  n32b_display.setScanLimit(1); // 0-7: Show 1-8 digits. Beware of currenct restrictions for 1-3 digits! See datasheet.
-  n32b_display.setDecode(0xFF); // Enable "BCD Type B" decoding for all digits.
-  n32b_display.setEnabled(true);
-  n32b_display.setDigit(0, 15);
-  n32b_display.setDigit(1, 15);
-  n32b_display.display();
+  // n32b_display.setIntensity(0); // 0 = min, 15 = max
+  // n32b_display.setScanLimit(1); // 0-7: Show 1-8 digits. Beware of currenct restrictions for 1-3 digits! See datasheet.
+  // n32b_display.setDecode(0xFF); // Enable "BCD Type B" decoding for all digits.
+  // n32b_display.setEnabled(true);
+  // n32b_display.setDigit(0, 15);
+  // n32b_display.setDigit(1, 15);
+  // n32b_display.display();
 
+  n32b_display.setBright(0);
+  n32b_display.setDigitLimit(2);
+  
   muxFactory.init(MUX_S0, MUX_S1, MUX_S2, MUX_S3);
   muxFactory.setSignalPin(0, MUX_A_SIG);
   muxFactory.setSignalPin(1, MUX_B_SIG);
@@ -112,19 +115,26 @@ void setup()
   MIDICoreUSB.sendRealTime((midi::MidiType)0xFE);
   MIDICoreSerial.sendRealTime((midi::MidiType)0xFE);
 
+  for (uint8_t currentKnob = 0; currentKnob < NUMBER_OF_KNOBS; currentKnob++)
+  {
+    muxFactory.update(currentKnob);
+    updateKnob(currentKnob, true);
+  }
+
   /* Show factory reset animation */
-  // n32b_display.showStartUpAnimation();
+  n32b_display.showStartUpAnimation();
   // n32b_display.showChannelNumber(activePreset.channel);
 }
+
 void loop()
 {
   for (uint8_t currentKnob = 0; currentKnob < NUMBER_OF_KNOBS; currentKnob++)
   {
     muxFactory.update(currentKnob);
-    updateKnob(currentKnob, inhibitMidi);
+    updateKnob(currentKnob, false);
   }
   doMidiRead();
 
-  renderButtonFunctions(); // Update buttons stats
+  renderButtonFunctions();
   n32b_display.updateDisplay();
 }

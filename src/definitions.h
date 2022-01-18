@@ -103,8 +103,8 @@ struct Preset_t
 extern byte currentPresetNumber;
 extern Preset_t activePreset;
 
-extern uint8_t knobBuffer[32][2][3];
-extern uint8_t emittedValue[32][9];
+extern uint16_t knobValues[32][2];
+extern float EMA_a; // EMA alpha
 
 /* Buttons variables */
 extern const uint8_t SHORT_PRESS_TIME; // Milliseconds
@@ -114,7 +114,6 @@ extern bool isPressingBButton;
 
 /* Mode variables */
 extern bool isPresetMode;
-extern bool inhibitMidi;
 
 extern bool wasFactoryReset;
 // byte index in EEPROM for the last used preset

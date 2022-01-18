@@ -34,6 +34,4 @@ void renderButtonFunctions();
 
 void doMidiRead();
 
-uint8_t getKnobValue(uint8_t, bool);
-
 #endif

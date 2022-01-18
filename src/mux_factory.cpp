@@ -29,14 +29,7 @@ void MUX_FACTORY::setSignalPin(bool muxIndex, uint8_t pin)
 void MUX_FACTORY::update(uint8_t currentKnob)
 {
     setMultiplexer(currentKnob);
-    for (uint8_t i = 2; i > 0; i--)
-    {
-        knobBuffer[currentKnob][0][i] = knobBuffer[currentKnob][0][i - 1];
-        knobBuffer[currentKnob][1][i] = knobBuffer[currentKnob][1][i - 1];
-    }
-    uint16_t shiftedValue = map(readSingle(currentKnob), 0, 1023, 0, 16383);
-    knobBuffer[currentKnob][0][0] = shiftedValue >> 7;          // MSB
-    knobBuffer[currentKnob][1][0] = lowByte(shiftedValue) >> 1; // LSB
+    knobValues[currentKnob][0] = (EMA_a * readSingle(currentKnob)) + ((1 - EMA_a) * knobValues[currentKnob][0]);
 }
 
 uint16_t MUX_FACTORY::readSingle(uint8_t currentKnob)
@@ -51,15 +44,4 @@ void MUX_FACTORY::setMultiplexer(uint8_t currentKnob)
     {
         digitalWrite(channels[i], bitRead(currentKnob, i));
     }
-}
-
-uint8_t MUX_FACTORY::getKnobValue(uint8_t index, bool isMSB)
-{
-    uint16_t average = 0;
-    for (uint8_t i = 0; i < 4; i++)
-    {
-        average += knobBuffer[index][isMSB][i];
-    }
-    average /= 4;
-    return average;
 }
