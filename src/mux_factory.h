@@ -21,7 +21,6 @@ public:
   void setSignalPin(bool muxIndex, uint8_t pin);
   void update(uint8_t);
   void setMultiplexer(uint8_t);
-  uint8_t getKnobValue(uint8_t, bool);
   uint16_t read(uint8_t);
 
 private:
