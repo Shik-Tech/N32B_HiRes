@@ -1,5 +1,5 @@
 /*
-  N32B Hi Res Firmware v3.5.0
+  N32B Hi Res Firmware v3.5.2
   MIT License
 
   Copyright (c) 2022 SHIK
@@ -11,11 +11,12 @@ const static byte chars[] = {
     B01111110, B00110000, B01101101, B01111001, B00110011, B01011011, B01011111, B01110000, B01111111, B01111011};
 
 // Auto clear the display
-void N32B_DISPLAY::updateDisplay(uint8_t readInterval)
+void N32B_DISPLAY::clearDisplay(bool &disableKnobs, uint8_t readInterval)
 {
     if (millis() - displayOffTimer >= readInterval)
     {
         clear();
+        disableKnobs = false;
     }
 }
 
@@ -38,14 +39,16 @@ void N32B_DISPLAY::blinkDot(uint8_t dotSide)
     displayOffTimer = millis();
 }
 
-void N32B_DISPLAY::showChannelNumber(uint8_t channelNumber)
+void N32B_DISPLAY::showChannelNumber(uint8_t channelNumber, bool &disableKnobs)
 {
+    disableKnobs = true;
     printDigit(channelNumber);
     displayOffTimer = millis();
 }
 
-void N32B_DISPLAY::showPresetNumber(byte presetNumber)
+void N32B_DISPLAY::showPresetNumber(uint8_t presetNumber, bool &disableKnobs)
 {
+    disableKnobs = true;
     clear();
     printDigit(presetNumber);
     write(2, B01100111);

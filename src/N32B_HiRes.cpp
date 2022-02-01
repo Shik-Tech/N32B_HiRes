@@ -1,5 +1,5 @@
 /*
-  N32B Hi Res Firmware v3.5.0
+  N32B Hi Res Firmware v3.5.2
   MIT License
 
   Copyright (c) 2022 SHIK
@@ -114,10 +114,10 @@ void loop()
   for (uint8_t currentKnob = 0; currentKnob < NUMBER_OF_KNOBS; currentKnob++)
   {
     muxFactory.update(currentKnob);
-    updateKnob(currentKnob, false);
+    updateKnob(currentKnob, disableKnobs);
   }
   doMidiRead();
 
   renderButtonFunctions();
-  n32b_display.updateDisplay();
+  n32b_display.clearDisplay(disableKnobs);
 }

@@ -1,5 +1,5 @@
 /*
-  N32B Hi Res Firmware v3.5.0
+  N32B Hi Res Firmware v3.5.2
   MIT License
 
   Copyright (c) 2022 SHIK
@@ -36,7 +36,7 @@ const unsigned int reset_timeout = 4000;
 // This will trigger reformatting on the next startup
 const uint8_t MAJOR_VERSION = 3;
 const uint8_t MINOR_VERSION = 5;
-const uint8_t POINT_VERSION = 1;
+const uint8_t POINT_VERSION = 2;
 
 // SYSEX constants
 const uint8_t SHIK_MANUFACTURER_ID = 32;
@@ -67,8 +67,10 @@ const uint8_t NUMBER_OF_PRESETS = 5;
 byte currentPresetNumber = 0;
 Preset_t activePreset;
 
-uint16_t knobValues[32][2] = {0};
-float EMA_a = 0.4;
+// uint16_t bufferKnobValues[32][3];
+uint16_t knobValues[32][4] = {0};
+float EMA_a = 0.2;
+bool disableKnobs = false;
 
 /* Buttons variables */
 const uint8_t SHORT_PRESS_TIME = 255; // Milliseconds

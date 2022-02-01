@@ -1,5 +1,5 @@
 /*
-  N32B Hi Res Firmware v3.5.0
+  N32B Hi Res Firmware v3.5.2
   MIT License
 
   Copyright (c) 2022 SHIK
@@ -74,7 +74,7 @@ void loadPreset(uint8_t presetNumber)
 
     // Update the last used preset
     currentPresetNumber = presetNumber;
-    n32b_display.showPresetNumber(presetNumber);
+    n32b_display.showPresetNumber(presetNumber, disableKnobs);
 
     // Save current preset as the active preset.
     // Is commented out to prevent EEPROM from over used

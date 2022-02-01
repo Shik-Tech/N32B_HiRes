@@ -1,5 +1,5 @@
 /*
-  N32B Hi Res Firmware v3.5.0
+  N32B Hi Res Firmware v3.5.2
   MIT License
 
   Copyright (c) 2022 SHIK
@@ -99,8 +99,9 @@ struct Preset_t
 /* Device setup data */
 extern byte currentPresetNumber;
 extern Preset_t activePreset;
-extern uint16_t knobValues[32][2];
+extern uint16_t knobValues[32][4];
 extern float EMA_a; // EMA alpha
+extern bool disableKnobs;
 
 /* Buttons variables */
 extern const uint8_t SHORT_PRESS_TIME; // Milliseconds

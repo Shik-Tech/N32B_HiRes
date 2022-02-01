@@ -1,5 +1,5 @@
 /*
-  N32B Hi Res Firmware v3.5.0
+  N32B Hi Res Firmware v3.5.2
   MIT License
 
   Copyright (c) 2022 SHIK
@@ -25,15 +25,17 @@ void onSerialMessage(const midi::Message<128> &message)
 
 void updateKnob(uint8_t index, bool inhibit)
 {
-  if (knobValues[index][0] != knobValues[index][1])
+  if (
+      (knobValues[index][0] != knobValues[index][1]) &&
+      (knobValues[index][0] != knobValues[index][2]) &&
+      (knobValues[index][0] != knobValues[index][3]))
   {
-    uint16_t shiftedValue = map(knobValues[index][0], 0, 1021, 0, 16383);
+    uint16_t shiftedValue = map(knobValues[index][0], 0, 1019, 0, 16383);
     uint8_t MSBValue = shiftedValue >> 7;
     uint8_t LSBValue = lowByte(shiftedValue) >> 1;
 
     if (!inhibit)
     {
-
       if (activePreset.knobInfo[index].NRPN == 0)
       {
         uint8_t knobChannel = activePreset.knobInfo[index].CHANNEL & 0x7f;
@@ -52,6 +54,8 @@ void updateKnob(uint8_t index, bool inhibit)
       }
     }
 
+    knobValues[index][3] = knobValues[index][2];
+    knobValues[index][2] = knobValues[index][1];
     knobValues[index][1] = knobValues[index][0];
   }
 }
@@ -65,15 +69,15 @@ void sendCCMessage(uint8_t MSB, uint8_t LSB, uint8_t MSBvalue, uint8_t LSBvalue,
 
     MIDICoreUSB.sendControlChange(MSB, MSBvalue, channel);
     MIDICoreUSB.sendControlChange(LSB, LSBvalue, channel);
-    n32b_display.showValue(MSBvalue);
+    // n32b_display.showValue(MSBvalue);
   }
   else
   {
     MIDICoreSerial.sendControlChange(MSB, MSBvalue, channel);
     MIDICoreUSB.sendControlChange(MSB, MSBvalue, channel);
-    n32b_display.showValue(MSBvalue);
+    // n32b_display.showValue(MSBvalue);
   }
-  // n32b_display.blinkDot(1);
+  n32b_display.blinkDot(1);
 }
 
 void sendNRPM(uint8_t NRPNNumberMSB, uint8_t NRPNNumberLSB, uint8_t MSBvalue, uint8_t LSBvalue, uint8_t channel)
@@ -146,12 +150,12 @@ void buttonReleaseAction(bool direction)
     if (isPresetMode)
     {
       changePreset(direction);
-      n32b_display.showPresetNumber(currentPresetNumber);
+      n32b_display.showPresetNumber(currentPresetNumber, disableKnobs);
     }
     else
     {
       changeChannel(direction);
-      n32b_display.showChannelNumber(activePreset.channel);
+      n32b_display.showChannelNumber(activePreset.channel, disableKnobs);
     }
   }
 
@@ -202,12 +206,12 @@ void renderButtonFunctions()
     if (isPressingAButton)
     {
       isPresetMode = false;
-      n32b_display.showChannelNumber(activePreset.channel);
+      n32b_display.showChannelNumber(activePreset.channel, disableKnobs);
     }
     if (isPressingBButton)
     {
       isPresetMode = true;
-      n32b_display.showPresetNumber(currentPresetNumber);
+      n32b_display.showPresetNumber(currentPresetNumber, disableKnobs);
     }
   }
 }
