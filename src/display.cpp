@@ -23,7 +23,6 @@ void N32B_DISPLAY::clearDisplay(bool &disableKnobs, uint8_t readInterval)
 void N32B_DISPLAY::showValue(uint8_t value)
 {
     clear();
-
     printDigit(value);
     if (value > 99)
     {
@@ -35,12 +34,14 @@ void N32B_DISPLAY::showValue(uint8_t value)
 // Blink the decimal points
 void N32B_DISPLAY::blinkDot(uint8_t dotSide)
 {
+    clear();
     write(dotSide, B10000000);
     displayOffTimer = millis();
 }
 
 void N32B_DISPLAY::showChannelNumber(uint8_t channelNumber, bool &disableKnobs)
 {
+    clear();
     disableKnobs = true;
     printDigit(channelNumber);
     displayOffTimer = millis();

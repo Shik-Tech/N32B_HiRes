@@ -36,7 +36,7 @@ const unsigned int reset_timeout = 4000;
 // This will trigger reformatting on the next startup
 const uint8_t MAJOR_VERSION = 3;
 const uint8_t MINOR_VERSION = 5;
-const uint8_t POINT_VERSION = 2;
+const uint8_t POINT_VERSION = 3;
 
 // SYSEX constants
 const uint8_t SHIK_MANUFACTURER_ID = 32;
