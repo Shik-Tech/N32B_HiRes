@@ -92,7 +92,6 @@ void setKnobAsDisabled(byte knobIndex)
     activePreset.knobInfo[knobIndex].MODE = KNOB_MODE_STANDARD;
     // activePreset.knobInfo[knobIndex].CHANNEL = 17; // Make the knob out of range to disable it
 }
-}
 
 void setKnobAsNRPN(byte knobIndex, byte LSB, byte MSB)
 {
