@@ -38,11 +38,10 @@ void formatFactory()
   {
     defaultPreset.knobInfo[knobsLocation[indexId]].MSB = indexId;
     defaultPreset.knobInfo[knobsLocation[indexId]].LSB = indexId + 32;
-    defaultPreset.knobInfo[knobsLocation[indexId]].NRPN = 0;
+    defaultPreset.knobInfo[knobsLocation[indexId]].MODE = 0;
     defaultPreset.knobInfo[knobsLocation[indexId]].CHANNEL = 128;
+    defaultPreset.knobInfo[knobsLocation[indexId]].highResolution = 1;
   }
-
-  defaultPreset.highResolution = 1;
 
   // Write the default preset to all preset slots
   uint16_t baseAddress = 1;

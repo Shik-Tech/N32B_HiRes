@@ -29,7 +29,7 @@ void processSysex(unsigned char *data, unsigned int size)
         }
         if (data[COMMAND] == HIGH_RES_14BIT)
         {
-            useHighResolution(data[KNOB_INDEX]);
+            useHighResolution(data[KNOB_INDEX], data[KNOB_INDEX]);
         }
         if (data[COMMAND] == SAVE_PRESET)
         {
@@ -67,7 +67,7 @@ void setKnobAsCC(byte knobIndex, byte MSB, byte LSB)
     {
         activePreset.knobInfo[knobIndex].MSB = MSB;
         activePreset.knobInfo[knobIndex].LSB = LSB;
-        activePreset.knobInfo[knobIndex].NRPN = 0;
+        activePreset.knobInfo[knobIndex].MODE = 0;
         activePreset.knobInfo[knobIndex].CHANNEL = 128;
     }
 }
@@ -78,7 +78,7 @@ void setKnobAsCCWithChannel(byte knobIndex, byte MSB, byte LSB, byte channel)
     {
         activePreset.knobInfo[knobIndex].MSB = MSB;
         activePreset.knobInfo[knobIndex].LSB = LSB;
-        activePreset.knobInfo[knobIndex].NRPN = 0;
+        activePreset.knobInfo[knobIndex].MODE = 0;
         activePreset.knobInfo[knobIndex].CHANNEL = channel | 0x80;
     }
 }
@@ -88,7 +88,8 @@ void setKnobAsDisabled(byte knobIndex)
     if (knobIndex < NUMBER_OF_KNOBS)
     {
         activePreset.knobInfo[knobIndex].MSB = 0;
-        activePreset.knobInfo[knobIndex].NRPN = 0;
+        activePreset.knobInfo[knobIndex].LSB = 0;
+        activePreset.knobInfo[knobIndex].MODE = 0;
         activePreset.knobInfo[knobIndex].CHANNEL = 17 | 0x80; // Make the knob out of range to disable it
     }
 }
@@ -99,14 +100,14 @@ void setKnobAsNRPN(byte knobIndex, byte LSB, byte MSB)
     {
         activePreset.knobInfo[knobIndex].MSB = MSB;
         activePreset.knobInfo[knobIndex].LSB = LSB;
-        activePreset.knobInfo[knobIndex].NRPN = 1;
+        activePreset.knobInfo[knobIndex].MODE = 2;
         activePreset.knobInfo[knobIndex].CHANNEL = 128;
     }
 }
 
-void useHighResolution(bool value)
+void useHighResolution(byte knobIndex, bool value)
 {
-    activePreset.highResolution = value;
+    activePreset.knobInfo[knobIndex].highResolution = value;
 }
 
 void handleChangeChannel(byte channel)

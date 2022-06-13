@@ -59,6 +59,11 @@ const uint8_t CHANGE_CHANNEL = 9;         // Changes the global MIDI channel
 const uint8_t DISABLE_KNOB = 11;          // Disable
 const uint8_t HIGH_RES_14BIT = 14;        // Use 7-bit or 14-bit midi messages
 
+const uint8_t KNOB_MODE_STANDARD = 0;
+const uint8_t KNOB_MODE_DUAL = 1;
+const uint8_t KNOB_MODE_NRPN = 2;
+const uint8_t KNOB_MODE_RPN = 3;
+
 // General definitions
 const uint8_t NUMBER_OF_KNOBS = 32;
 const uint8_t NUMBER_OF_PRESETS = 5;

@@ -20,7 +20,7 @@ void setKnobAsCC(byte, byte, byte);
 void setKnobAsCCWithChannel(byte, byte, byte, byte);
 void setKnobAsDisabled(byte);
 void setKnobAsNRPN(byte, byte, byte);
-void useHighResolution(bool);
+void useHighResolution(byte, bool);
 void handleChangeChannel(byte);
 void handleProgramChange(byte, byte);
 

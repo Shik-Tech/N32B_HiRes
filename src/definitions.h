@@ -71,29 +71,31 @@ extern const uint8_t CHANGE_CHANNEL;         // Changes the global MIDI channel
 extern const uint8_t DISABLE_KNOB;           // Disable
 extern const uint8_t HIGH_RES_14BIT;         // Use 7-bit or 14-bit midi messages
 
+extern const uint8_t KNOB_MODE_STANDARD;
+extern const uint8_t KNOB_MODE_DUAL;
+extern const uint8_t KNOB_MODE_NRPN;
+extern const uint8_t KNOB_MODE_RPN;
+
 // General definitions
 extern const uint8_t NUMBER_OF_KNOBS;
 extern const uint8_t NUMBER_OF_PRESETS;
 
+// Knob settings structure
+struct Knob_t
+{
+  uint8_t MSB;
+  uint8_t LSB;
+  midi::Channel CHANNEL;
+  uint8_t MODE;
+  bool highResolution;
+};
+
 // A preset struct is defining the device preset structure
 struct Preset_t
 {
-
   // channel the device is sending on
   midi::Channel channel;
-
-  // Knob settings structure
-  struct Knob_t
-  {
-    uint8_t MSB;
-    uint8_t LSB;
-    midi::Channel CHANNEL;
-    bool NRPN;
-    // bool RPN;
-  } knobInfo[32];
-
-  // High resolution 14-bit
-  bool highResolution;
+  Knob_t knobInfo[32];
 };
 
 /* Device setup data */
