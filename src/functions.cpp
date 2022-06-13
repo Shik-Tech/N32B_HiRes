@@ -43,8 +43,16 @@ void updateKnob(uint8_t index, bool inhibit)
         sendCCMessage(currentKnob, MSBValue, LSBValue);
         break;
 
+      case KNOB_MODE_DUAL:
+        sendDualCCMessage(currentKnob, MSBValue, LSBValue);
+        break;
+
       case KNOB_MODE_NRPN:
         sendNRPM(currentKnob, MSBValue, LSBValue);
+        break;
+
+      case KNOB_MODE_RPN:
+        sendRPM(currentKnob, MSBValue, LSBValue);
         break;
 
       default:
@@ -60,6 +68,26 @@ void updateKnob(uint8_t index, bool inhibit)
 
 void sendCCMessage(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue)
 {
+  midi::Channel channel = currentKnob.CHANNEL > 0 && currentKnob.CHANNEL < 17 ? currentKnob.CHANNEL : activePreset.channel;
+
+  if (currentKnob.highResolution)
+  {
+    MIDICoreSerial.sendControlChange(currentKnob.MSB, MSBvalue, channel);
+    MIDICoreSerial.sendControlChange(currentKnob.LSB, LSBvalue, channel);
+
+    MIDICoreUSB.sendControlChange(currentKnob.MSB, MSBvalue, channel);
+    MIDICoreUSB.sendControlChange(currentKnob.LSB, LSBvalue, channel);
+  }
+  else
+  {
+    MIDICoreSerial.sendControlChange(currentKnob.MSB, MSBvalue, channel);
+    MIDICoreUSB.sendControlChange(currentKnob.MSB, MSBvalue, channel);
+  }
+  n32b_display.blinkDot(1);
+}
+
+void sendDualCCMessage(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue)
+{
   // Serial.println("sendCCMessage");
   // Serial.print("currentKnob.MSB: ");
   // Serial.println(currentKnob.MSB);
@@ -67,30 +95,22 @@ void sendCCMessage(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t L
   // Serial.println(currentKnob.LSB);
   // Serial.print("currentKnob.CHANNEL: ");
   // Serial.println(currentKnob.CHANNEL);
-  // Serial.print("currentKnob.highResolution: ");
-  // Serial.println(currentKnob.highResolution);
   // Serial.print("MSBvalue: ");
   // Serial.println(MSBvalue);
-  // Serial.print("LSBvalue: ");
-  // Serial.println(LSBvalue);
   // Serial.println("-------------");
 
   midi::Channel channel = currentKnob.CHANNEL > 0 && currentKnob.CHANNEL < 17 ? currentKnob.CHANNEL : activePreset.channel;
 
-  if (currentKnob.highResolution)
-  {
-    // Serial.print("sendCC, channel: ");
-    // Serial.println(channel);
-    // Serial.println(">>>>>>>>>>>>>>>>>>>");
+  // Serial.print("sendCC, channel: ");
+  // Serial.println(channel);
+  // Serial.println(">>>>>>>>>>>>>>>>>>>");
 
-    MIDICoreSerial.sendControlChange(currentKnob.MSB, MSBvalue, channel);
-    MIDICoreSerial.sendControlChange(currentKnob.LSB, LSBvalue, channel);
-
-    MIDICoreUSB.sendControlChange(currentKnob.MSB, MSBvalue, channel);
-    MIDICoreUSB.sendControlChange(currentKnob.LSB, LSBvalue, channel);
-  }
   MIDICoreSerial.sendControlChange(currentKnob.MSB, MSBvalue, channel);
+  MIDICoreSerial.sendControlChange(currentKnob.LSB, MSBvalue, channel);
+
   MIDICoreUSB.sendControlChange(currentKnob.MSB, MSBvalue, channel);
+  MIDICoreUSB.sendControlChange(currentKnob.LSB, MSBvalue, channel);
+
   n32b_display.blinkDot(1);
 }
 
@@ -103,6 +123,27 @@ void sendNRPM(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBval
 
   MIDICoreSerial.sendControlChange(98, currentKnob.LSB & 0x7F, channel); // NRPN LSB
   MIDICoreUSB.sendControlChange(98, currentKnob.LSB & 0x7F, channel);    // NRPN LSB
+
+  MIDICoreSerial.sendControlChange(6, MSBvalue, channel); // Data Entry MSB
+  MIDICoreUSB.sendControlChange(6, MSBvalue, channel);    // Data Entry MSB
+
+  if (currentKnob.highResolution)
+  {
+    MIDICoreSerial.sendControlChange(38, MSBvalue, channel); // LSB for Control 6 (Data Entry)
+    MIDICoreUSB.sendControlChange(38, MSBvalue, channel);    // LSB for Control 6 (Data Entry)
+  }
+  n32b_display.blinkDot(1);
+}
+
+void sendRPM(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue)
+{
+  midi::Channel channel = currentKnob.CHANNEL > 0 && currentKnob.CHANNEL < 17 ? currentKnob.CHANNEL : activePreset.channel;
+
+  MIDICoreSerial.sendControlChange(101, currentKnob.MSB & 0x7F, channel); // RPN MSB
+  MIDICoreUSB.sendControlChange(101, currentKnob.MSB & 0x7F, channel);    // RPN MSB
+
+  MIDICoreSerial.sendControlChange(100, currentKnob.LSB & 0x7F, channel); // RPN LSB
+  MIDICoreUSB.sendControlChange(100, currentKnob.LSB & 0x7F, channel);    // RPN LSB
 
   MIDICoreSerial.sendControlChange(6, MSBvalue, channel); // Data Entry MSB
   MIDICoreUSB.sendControlChange(6, MSBvalue, channel);    // Data Entry MSB
