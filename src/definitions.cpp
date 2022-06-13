@@ -11,32 +11,13 @@ USBMIDI_CREATE_INSTANCE(0, MIDICoreUSB);
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDICoreSerial);
 
 MUX_FACTORY muxFactory;
-N32B_DISPLAY n32b_display(16, 10, 15);
+N32B_DISPLAY n32b_display(DIN, CS, CLK);
 
 ezButton buttonA(BUTTON_A_PIN);
 ezButton buttonB(BUTTON_B_PIN);
 
-/* Pin setup */
-const uint8_t MUX_A_SIG = 8;
-const uint8_t MUX_B_SIG = 9;
-const uint8_t MIDI_TX_PIN = 1;
-const uint8_t MUX_S0 = 2;
-const uint8_t MUX_S1 = 3;
-const uint8_t MUX_S2 = 4;
-const uint8_t MUX_S3 = 5;
-const uint8_t LED_PIN = 17;
-const uint8_t BUTTON_A_PIN = A3;
-const uint8_t BUTTON_B_PIN = A2;
-
 // Reset to factory preset timeout
 const unsigned int reset_timeout = 4000;
-
-/*--- EEPROM Format Chuncks ---*/
-// Change these any time the data structure of a preset changed
-// This will trigger reformatting on the next startup
-const uint8_t MAJOR_VERSION = 3;
-const uint8_t MINOR_VERSION = 5;
-const uint8_t POINT_VERSION = 3;
 
 // SYSEX constants
 const uint8_t SHIK_MANUFACTURER_ID = 32;

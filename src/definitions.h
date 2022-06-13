@@ -29,16 +29,22 @@ extern ezButton buttonA;
 extern ezButton buttonB;
 
 /* Pin setup */
-extern const uint8_t MUX_A_SIG;
-extern const uint8_t MUX_B_SIG;
-extern const uint8_t MIDI_TX_PIN;
-extern const uint8_t MUX_S0;
-extern const uint8_t MUX_S1;
-extern const uint8_t MUX_S2;
-extern const uint8_t MUX_S3;
-extern const uint8_t LED_PIN;
-extern const uint8_t BUTTON_A_PIN;
-extern const uint8_t BUTTON_B_PIN;
+enum PINS
+{
+  MUX_A_SIG = 8,
+  MUX_B_SIG = 9,
+  MIDI_TX_PIN = 1,
+  MUX_S0 = 2,
+  MUX_S1 = 3,
+  MUX_S2 = 4,
+  MUX_S3 = 5,
+  LED_PIN = 17,
+  DIN = 16,
+  CS = 10,
+  CLK = 15,
+  BUTTON_A_PIN = A3,
+  BUTTON_B_PIN = A2
+};
 
 // Reset to factory preset timeout
 extern const unsigned int reset_timeout;
@@ -46,9 +52,12 @@ extern const unsigned int reset_timeout;
 /*--- EEPROM Format Chuncks ---*/
 // Change these any time the data structure of a preset changed
 // This will trigger reformatting on the next startup
-extern const uint8_t MAJOR_VERSION;
-extern const uint8_t MINOR_VERSION;
-extern const uint8_t POINT_VERSION;
+enum FIRMWARE_VERSION
+{
+  MAJOR_VERSION = 3,
+  MINOR_VERSION = 5,
+  POINT_VERSION = 3
+};
 
 // SYSEX constants
 extern const uint8_t SHIK_MANUFACTURER_ID;
@@ -104,7 +113,6 @@ struct Knob_t
 // A preset struct is defining the device preset structure
 struct Preset_t
 {
-  // channel the device is sending on
   midi::Channel channel;
   Knob_t knobInfo[32];
 };
