@@ -41,29 +41,6 @@ const uint8_t POINT_VERSION = 3;
 // SYSEX constants
 const uint8_t SHIK_MANUFACTURER_ID = 32;
 
-const uint8_t MANUFACTURER = 1;
-const uint8_t COMMAND = 2;
-const uint8_t KNOB_INDEX = 3;
-const uint8_t MSB_INDEX = 4;
-const uint8_t LSB_INDEX = 5;
-const uint8_t CHANNEL_INDEX = 6;
-
-const uint8_t SET_KNOB_AS_CC = 1;         // CC
-const uint8_t SET_KNOB_AS_CC_CHANNEL = 2; // CC & Channel
-const uint8_t SET_KNOB_AS_NRPN = 3;       // NRPN
-const uint8_t SAVE_PRESET = 5;            // Save the preset
-const uint8_t LOAD_PRESET = 6;            // Load a preset
-const uint8_t SEND_CURRENT_CONFIG = 7;    // Send the current config
-const uint8_t SYNC_KNOBS = 8;             // Forces the emission of the messages associated to every knob
-const uint8_t CHANGE_CHANNEL = 9;         // Changes the global MIDI channel
-const uint8_t DISABLE_KNOB = 11;          // Disable
-const uint8_t HIGH_RES_14BIT = 14;        // Use 7-bit or 14-bit midi messages
-
-const uint8_t KNOB_MODE_STANDARD = 0;
-const uint8_t KNOB_MODE_DUAL = 1;
-const uint8_t KNOB_MODE_NRPN = 2;
-const uint8_t KNOB_MODE_RPN = 3;
-
 // General definitions
 const uint8_t NUMBER_OF_KNOBS = 32;
 const uint8_t NUMBER_OF_PRESETS = 5;

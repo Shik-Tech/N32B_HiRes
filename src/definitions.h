@@ -53,28 +53,39 @@ extern const uint8_t POINT_VERSION;
 // SYSEX constants
 extern const uint8_t SHIK_MANUFACTURER_ID;
 
-extern const uint8_t MANUFACTURER;
-extern const uint8_t COMMAND;
-extern const uint8_t KNOB_INDEX;
-extern const uint8_t MSB_INDEX;
-extern const uint8_t LSB_INDEX;
-extern const uint8_t CHANNEL_INDEX;
+enum COMMANDS_INDEXS
+{
+  MANUFACTURER = 1,
+  COMMAND = 2,
+  KNOB_INDEX = 3,
+  MSB_INDEX = 4,
+  LSB_INDEX = 5,
+  CHANNEL_INDEX = 6
+};
 
-extern const uint8_t SET_KNOB_AS_CC;         // CC
-extern const uint8_t SET_KNOB_AS_CC_CHANNEL; // CC & Channel
-extern const uint8_t SET_KNOB_AS_NRPN;       // NRPN
-extern const uint8_t SAVE_PRESET;            // Save the preset
-extern const uint8_t LOAD_PRESET;            // Load a preset
-extern const uint8_t SEND_CURRENT_CONFIG;    // Send the current config
-extern const uint8_t SYNC_KNOBS;             // Forces the emission of the messages associated to every knob
-extern const uint8_t CHANGE_CHANNEL;         // Changes the global MIDI channel
-extern const uint8_t DISABLE_KNOB;           // Disable
-extern const uint8_t HIGH_RES_14BIT;         // Use 7-bit or 14-bit midi messages
+enum COMMANDS
+{
+  SET_KNOB_AS_CC = 1,         // CC
+  SET_KNOB_AS_CC_CHANNEL = 2, // CC & Channel
+  SET_KNOB_AS_NRPN = 3,       // NRPN
+  SET_KNOB_AS_RPN = 4,        // RPN
+  SET_KNOB_AS_DUAL = 15,      // DUAL mode (2 CC messages per knob)
+  SAVE_PRESET = 5,            // Save the preset
+  LOAD_PRESET = 6,            // Load a preset
+  SEND_CURRENT_CONFIG = 7,    // Send the current config
+  SYNC_KNOBS = 8,             // Forces the emission of the messages associated to every knob
+  CHANGE_CHANNEL = 9,         // Changes the global MIDI channel
+  DISABLE_KNOB = 11,          // Disable
+  HIGH_RES_14BIT = 14         // Use 7-bit or 14-bit midi messages
+};
 
-extern const uint8_t KNOB_MODE_STANDARD;
-extern const uint8_t KNOB_MODE_DUAL;
-extern const uint8_t KNOB_MODE_NRPN;
-extern const uint8_t KNOB_MODE_RPN;
+enum KNOB_MODES
+{
+  KNOB_MODE_STANDARD = 0,
+  KNOB_MODE_DUAL = 1,
+  KNOB_MODE_NRPN = 2,
+  KNOB_MODE_RPN = 3
+};
 
 // General definitions
 extern const uint8_t NUMBER_OF_KNOBS;

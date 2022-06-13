@@ -39,11 +39,11 @@ void updateKnob(uint8_t index, bool inhibit)
     {
       switch (currentKnob.MODE)
       {
-      case 0:
+      case KNOB_MODE_STANDARD:
         sendCCMessage(currentKnob, MSBValue, LSBValue);
         break;
 
-      case 2:
+      case KNOB_MODE_NRPN:
         sendNRPM(currentKnob, MSBValue, LSBValue);
         break;
 

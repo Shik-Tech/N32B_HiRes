@@ -11,48 +11,40 @@ void processSysex(unsigned char *data, unsigned int size)
 {
     if (size > 3 && data[MANUFACTURER] == SHIK_MANUFACTURER_ID)
     {
-        if (data[COMMAND] == SET_KNOB_AS_CC)
+        switch (data[COMMAND])
         {
+        case SET_KNOB_AS_CC:
             setKnobAsCC(data[KNOB_INDEX], data[MSB_INDEX], data[LSB_INDEX]);
-        }
-        if (data[COMMAND] == SET_KNOB_AS_CC_CHANNEL)
-        {
+            break;
+        case SET_KNOB_AS_DUAL:
+            break;
+        case SET_KNOB_AS_CC_CHANNEL:
             setKnobAsCCWithChannel(data[KNOB_INDEX], data[MSB_INDEX], data[LSB_INDEX], data[CHANNEL_INDEX]);
-        }
-        if (data[COMMAND] == SET_KNOB_AS_NRPN)
-        {
+            break;
+        case SET_KNOB_AS_NRPN:
             setKnobAsNRPN(data[KNOB_INDEX], data[MSB_INDEX], data[LSB_INDEX]);
-        }
-        if (data[COMMAND] == DISABLE_KNOB)
-        {
+            break;
+        case DISABLE_KNOB:
             setKnobAsDisabled(data[KNOB_INDEX]);
-        }
-        if (data[COMMAND] == HIGH_RES_14BIT)
-        {
+            break;
+        case HIGH_RES_14BIT:
             useHighResolution(data[KNOB_INDEX], data[KNOB_INDEX]);
-        }
-        if (data[COMMAND] == SAVE_PRESET)
-        {
+            break;
+        case SAVE_PRESET:
             savePreset(data[KNOB_INDEX]);
-        }
-        if (data[COMMAND] == LOAD_PRESET)
-        {
+            break;
+        case LOAD_PRESET:
             loadPreset(data[KNOB_INDEX]);
-        }
-        // if (data[COMMAND] == SYNC_KNOBS)
-        // {
-        //     for (uint8_t i = 0; i < NUMBER_OF_KNOBS; i++)
-        //     {
-        //         interpretKnob(i, true, false);
-        //     }
-        // }
-        if (data[COMMAND] == CHANGE_CHANNEL)
-        {
+            break;
+        case SYNC_KNOBS:
+            break;
+        case CHANGE_CHANNEL:
             handleChangeChannel(data[KNOB_INDEX]);
-        }
-        if (data[COMMAND] == SEND_CURRENT_CONFIG)
-        {
-            // sendCurrentConfig();
+            break;
+        case SEND_CURRENT_CONFIG:
+            break;
+        default:
+            break;
         }
     }
     else
