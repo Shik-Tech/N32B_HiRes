@@ -25,15 +25,43 @@ void onSerialMessage(const midi::Message<128> &message)
 
 void updateKnob(uint8_t index, bool inhibit)
 {
-  if (
-      (knobValues[index][0] != knobValues[index][1]) &&
-      (knobValues[index][0] != knobValues[index][2]) &&
-      (knobValues[index][0] != knobValues[index][3]))
+  Knob_t &currentKnob = activePreset.knobInfo[index];
+  bool needToUpdate = false;
+  uint16_t shiftedValue;
+  uint8_t MSBValue;
+  uint8_t LSBValue;
+  if (currentKnob.MODE == KNOB_MODE_HIRES)
   {
-    uint16_t shiftedValue = map(knobValues[index][0], 0, 1019, 0, 16383);
-    uint8_t MSBValue = shiftedValue >> 7;
-    uint8_t LSBValue = lowByte(shiftedValue) >> 1;
-    Knob_t &currentKnob = activePreset.knobInfo[index];
+    if (
+        (knobValues[index][0] != knobValues[index][1]) &&
+        (knobValues[index][0] != knobValues[index][2]) &&
+        (knobValues[index][0] != knobValues[index][3]))
+    {
+      needToUpdate = true;
+      shiftedValue = map(knobValues[index][0], 0, 1019, 0, 16383);
+      MSBValue = shiftedValue >> 7;
+      LSBValue = lowByte(shiftedValue) >> 1;
+    }
+  }
+  else
+  {
+    shiftedValue = map(knobValues[index][0], 0, 1019, 0, 16383);
+    MSBValue = shiftedValue >> 7;
+
+    uint8_t BufferValue1 = map(knobValues[index][1], 0, 1019, 0, 16383) >> 7;
+    uint8_t BufferValue2 = map(knobValues[index][2], 0, 1019, 0, 16383) >> 7;
+    uint8_t BufferValue3 = map(knobValues[index][3], 0, 1019, 0, 16383) >> 7;
+    if (
+        (MSBValue != BufferValue1) &&
+        (MSBValue != BufferValue2) &&
+        (MSBValue != BufferValue3))
+    {
+      needToUpdate = true;
+    }
+  }
+
+  if (needToUpdate)
+  {
     midi::Channel channel = currentKnob.CHANNEL > 0 && currentKnob.CHANNEL < 17 ? currentKnob.CHANNEL : activePreset.channel;
 
     if (!inhibit)
@@ -46,7 +74,7 @@ void updateKnob(uint8_t index, bool inhibit)
         break;
 
       case KNOB_MODE_DUAL:
-        sendDualCCMessage(currentKnob, MSBValue, LSBValue, channel);
+        sendDualCCMessage(currentKnob, MSBValue, channel);
         break;
 
       case KNOB_MODE_NRPN:
@@ -70,44 +98,33 @@ void updateKnob(uint8_t index, bool inhibit)
 
 void sendCCMessage(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue, midi::Channel channel)
 {
+  uint8_t MSBSendValue = currentKnob.INVERT_A ? 127 - MSBvalue : MSBvalue;
+  uint8_t LSBSendValue = currentKnob.INVERT_A ? 127 - LSBvalue : LSBvalue;
   if (currentKnob.MODE == KNOB_MODE_HIRES)
   {
-    MIDICoreSerial.sendControlChange(currentKnob.MSB, MSBvalue, channel);
-    MIDICoreSerial.sendControlChange(currentKnob.LSB, LSBvalue, channel);
+    MIDICoreSerial.sendControlChange(currentKnob.MSB, MSBSendValue, channel);
+    MIDICoreSerial.sendControlChange(currentKnob.LSB, LSBSendValue, channel);
 
-    MIDICoreUSB.sendControlChange(currentKnob.MSB, MSBvalue, channel);
-    MIDICoreUSB.sendControlChange(currentKnob.LSB, LSBvalue, channel);
+    MIDICoreUSB.sendControlChange(currentKnob.MSB, MSBSendValue, channel);
+    MIDICoreUSB.sendControlChange(currentKnob.LSB, LSBSendValue, channel);
   }
   else
   {
-    MIDICoreSerial.sendControlChange(currentKnob.MSB, MSBvalue, channel);
-    MIDICoreUSB.sendControlChange(currentKnob.MSB, MSBvalue, channel);
+    MIDICoreSerial.sendControlChange(currentKnob.MSB, MSBSendValue, channel);
+    MIDICoreUSB.sendControlChange(currentKnob.MSB, MSBSendValue, channel);
   }
   n32b_display.blinkDot(1);
 }
 
-void sendDualCCMessage(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue, midi::Channel channel)
+void sendDualCCMessage(const struct Knob_t &currentKnob, uint8_t MSBvalue, midi::Channel channel)
 {
-  // Serial.println("sendCCMessage");
-  // Serial.print("currentKnob.MSB: ");
-  // Serial.println(currentKnob.MSB);
-  // Serial.print("currentKnob.LSB: ");
-  // Serial.println(currentKnob.LSB);
-  // Serial.print("currentKnob.CHANNEL: ");
-  // Serial.println(currentKnob.CHANNEL);
-  // Serial.print("MSBvalue: ");
-  // Serial.println(MSBvalue);
-  // Serial.println("-------------");
+  uint8_t MSBSendValue = currentKnob.INVERT_A ? 127 - MSBvalue : MSBvalue;
+  uint8_t LSBSendValue = currentKnob.INVERT_B ? 127 - MSBvalue : MSBvalue;
+  MIDICoreSerial.sendControlChange(currentKnob.MSB, MSBSendValue, channel);
+  MIDICoreSerial.sendControlChange(currentKnob.LSB, LSBSendValue, channel);
 
-  // Serial.print("sendCC, channel: ");
-  // Serial.println(channel);
-  // Serial.println(">>>>>>>>>>>>>>>>>>>");
-
-  MIDICoreSerial.sendControlChange(currentKnob.MSB, MSBvalue, channel);
-  MIDICoreSerial.sendControlChange(currentKnob.LSB, MSBvalue, channel);
-
-  MIDICoreUSB.sendControlChange(currentKnob.MSB, MSBvalue, channel);
-  MIDICoreUSB.sendControlChange(currentKnob.LSB, MSBvalue, channel);
+  MIDICoreUSB.sendControlChange(currentKnob.MSB, MSBSendValue, channel);
+  MIDICoreUSB.sendControlChange(currentKnob.LSB, LSBSendValue, channel);
 
   n32b_display.blinkDot(1);
 }
@@ -123,11 +140,6 @@ void sendNRPM(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBval
   MIDICoreSerial.sendControlChange(6, MSBvalue, channel); // Data Entry MSB
   MIDICoreUSB.sendControlChange(6, MSBvalue, channel);    // Data Entry MSB
 
-  if (currentKnob.MODE == KNOB_MODE_HIRES)
-  {
-    MIDICoreSerial.sendControlChange(38, MSBvalue, channel); // LSB for Control 6 (Data Entry)
-    MIDICoreUSB.sendControlChange(38, MSBvalue, channel);    // LSB for Control 6 (Data Entry)
-  }
   n32b_display.blinkDot(1);
 }
 
@@ -142,11 +154,6 @@ void sendRPM(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalu
   MIDICoreSerial.sendControlChange(6, MSBvalue, channel); // Data Entry MSB
   MIDICoreUSB.sendControlChange(6, MSBvalue, channel);    // Data Entry MSB
 
-  if (currentKnob.MODE == KNOB_MODE_HIRES)
-  {
-    MIDICoreSerial.sendControlChange(38, MSBvalue, channel); // LSB for Control 6 (Data Entry)
-    MIDICoreUSB.sendControlChange(38, MSBvalue, channel);    // LSB for Control 6 (Data Entry)
-  }
   n32b_display.blinkDot(1);
 }
 

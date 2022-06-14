@@ -34,7 +34,7 @@ void formatFactory()
 
     defaultPreset.knobInfo[indexId].MSB = i;
     defaultPreset.knobInfo[indexId].LSB = i + 32;
-    defaultPreset.knobInfo[indexId].MODE = KNOB_MODE_HIRES;
+    defaultPreset.knobInfo[indexId].MODE = KNOB_MODE_STANDARD;
     defaultPreset.knobInfo[indexId].CHANNEL = 0;
     defaultPreset.knobInfo[indexId].INVERT_A = false;
     defaultPreset.knobInfo[indexId].INVERT_B = false;

@@ -22,7 +22,7 @@ void onSerialMessage(const midi::Message<128> &);
 void updateKnob(uint8_t, bool);
 
 void sendCCMessage(const struct Knob_t &, uint8_t, uint8_t, midi::Channel);
-void sendDualCCMessage(const struct Knob_t &, uint8_t, uint8_t, midi::Channel);
+void sendDualCCMessage(const struct Knob_t &, uint8_t, midi::Channel);
 void sendRPM(const struct Knob_t &, uint8_t, uint8_t, midi::Channel);
 void sendNRPM(const struct Knob_t &, uint8_t, uint8_t, midi::Channel);
 
