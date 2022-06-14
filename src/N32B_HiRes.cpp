@@ -71,7 +71,7 @@ void setup()
   // Write the factory presets to memory if the device was turn on for the first time
   if (!isEEPROMvalid())
   {
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < NUMBER_OF_PRESETS; i++)
     {
       digitalWrite(LED_PIN, HIGH);
       delay(300);

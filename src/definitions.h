@@ -21,6 +21,8 @@
 
 USING_NAMESPACE_MIDI;
 
+const uint8_t firmwareVersion[] PROGMEM = {3, 5, 3};
+
 extern MidiInterface<USBMIDI_NAMESPACE::usbMidiTransport> MIDICoreUSB;
 extern MIDI_NAMESPACE::MidiInterface<MIDI_NAMESPACE::SerialMIDI<HardwareSerial>> MIDICoreSerial;
 extern MUX_FACTORY muxFactory;
@@ -49,16 +51,6 @@ enum PINS
 // Reset to factory preset timeout
 extern const unsigned int reset_timeout;
 
-/*--- EEPROM Format Chuncks ---*/
-// Change these any time the data structure of a preset changed
-// This will trigger reformatting on the next startup
-enum FIRMWARE_VERSION
-{
-  MAJOR_VERSION = 3,
-  MINOR_VERSION = 5,
-  POINT_VERSION = 3
-};
-
 // SYSEX constants
 extern const uint8_t SHIK_MANUFACTURER_ID;
 
@@ -79,6 +71,7 @@ enum COMMANDS
   SET_KNOB_AS_NRPN = 3,       // NRPN
   SET_KNOB_AS_RPN = 4,        // RPN
   SET_KNOB_AS_DUAL = 15,      // DUAL mode (2 CC messages per knob)
+  SET_KNOB_AS_INVERTED = 16,  // Invert knob values
   SAVE_PRESET = 5,            // Save the preset
   LOAD_PRESET = 6,            // Load a preset
   SEND_CURRENT_CONFIG = 7,    // Send the current config
@@ -93,7 +86,8 @@ enum KNOB_MODES
   KNOB_MODE_STANDARD = 0,
   KNOB_MODE_DUAL = 1,
   KNOB_MODE_NRPN = 2,
-  KNOB_MODE_RPN = 3
+  KNOB_MODE_RPN = 3,
+  KNOB_MODE_HIRES = 4
 };
 
 // General definitions
@@ -107,7 +101,8 @@ struct Knob_t
   uint8_t LSB;
   midi::Channel CHANNEL;
   uint8_t MODE;
-  bool highResolution;
+  bool INVERT_A;
+  bool INVERT_B;
 };
 
 // A preset struct is defining the device preset structure

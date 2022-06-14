@@ -59,7 +59,6 @@ void processSysex(unsigned char *data, unsigned int size)
 
 void setKnobAsCC(byte knobIndex, byte MSB, byte LSB)
 {
-
     activePreset.knobInfo[knobIndex].MSB = MSB;
     activePreset.knobInfo[knobIndex].LSB = LSB;
     activePreset.knobInfo[knobIndex].MODE = KNOB_MODE_STANDARD;
@@ -68,7 +67,6 @@ void setKnobAsCC(byte knobIndex, byte MSB, byte LSB)
 
 void setKnobAsDualCC(byte knobIndex, byte MSB, byte LSB)
 {
-
     activePreset.knobInfo[knobIndex].MSB = MSB;
     activePreset.knobInfo[knobIndex].LSB = LSB;
     activePreset.knobInfo[knobIndex].MODE = KNOB_MODE_DUAL;
@@ -77,7 +75,6 @@ void setKnobAsDualCC(byte knobIndex, byte MSB, byte LSB)
 
 void setKnobAsCCWithChannel(byte knobIndex, byte MSB, byte LSB, byte channel)
 {
-
     activePreset.knobInfo[knobIndex].MSB = MSB;
     activePreset.knobInfo[knobIndex].LSB = LSB;
     activePreset.knobInfo[knobIndex].MODE = KNOB_MODE_STANDARD;
@@ -86,7 +83,6 @@ void setKnobAsCCWithChannel(byte knobIndex, byte MSB, byte LSB, byte channel)
 
 void setKnobAsDisabled(byte knobIndex)
 {
-
     activePreset.knobInfo[knobIndex].MSB = 0;
     activePreset.knobInfo[knobIndex].LSB = 0;
     activePreset.knobInfo[knobIndex].MODE = KNOB_MODE_STANDARD;
@@ -95,7 +91,6 @@ void setKnobAsDisabled(byte knobIndex)
 
 void setKnobAsNRPN(byte knobIndex, byte LSB, byte MSB)
 {
-
     activePreset.knobInfo[knobIndex].MSB = MSB;
     activePreset.knobInfo[knobIndex].LSB = LSB;
     activePreset.knobInfo[knobIndex].MODE = KNOB_MODE_NRPN;
@@ -113,7 +108,7 @@ void setKnobAsRPN(byte knobIndex, byte LSB, byte MSB)
 
 void useHighResolution(byte knobIndex, bool value)
 {
-    activePreset.knobInfo[knobIndex].highResolution = value;
+    activePreset.knobInfo[knobIndex].MODE = KNOB_MODE_HIRES;
 }
 
 void handleChangeChannel(byte channel)
@@ -127,7 +122,7 @@ void handleChangeChannel(byte channel)
 // Change preset on program change
 void handleProgramChange(byte channel, byte number)
 {
-    if (number < 5)
+    if (number < NUMBER_OF_PRESETS)
     {
         loadPreset(number);
     }

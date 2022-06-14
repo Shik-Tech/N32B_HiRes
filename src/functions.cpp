@@ -34,25 +34,27 @@ void updateKnob(uint8_t index, bool inhibit)
     uint8_t MSBValue = shiftedValue >> 7;
     uint8_t LSBValue = lowByte(shiftedValue) >> 1;
     Knob_t &currentKnob = activePreset.knobInfo[index];
+    midi::Channel channel = currentKnob.CHANNEL > 0 && currentKnob.CHANNEL < 17 ? currentKnob.CHANNEL : activePreset.channel;
 
     if (!inhibit)
     {
       switch (currentKnob.MODE)
       {
       case KNOB_MODE_STANDARD:
-        sendCCMessage(currentKnob, MSBValue, LSBValue);
+      case KNOB_MODE_HIRES:
+        sendCCMessage(currentKnob, MSBValue, LSBValue, channel);
         break;
 
       case KNOB_MODE_DUAL:
-        sendDualCCMessage(currentKnob, MSBValue, LSBValue);
+        sendDualCCMessage(currentKnob, MSBValue, LSBValue, channel);
         break;
 
       case KNOB_MODE_NRPN:
-        sendNRPM(currentKnob, MSBValue, LSBValue);
+        sendNRPM(currentKnob, MSBValue, LSBValue, channel);
         break;
 
       case KNOB_MODE_RPN:
-        sendRPM(currentKnob, MSBValue, LSBValue);
+        sendRPM(currentKnob, MSBValue, LSBValue, channel);
         break;
 
       default:
@@ -66,11 +68,10 @@ void updateKnob(uint8_t index, bool inhibit)
   }
 }
 
-void sendCCMessage(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue)
+void sendCCMessage(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue, midi::Channel channel)
 {
-  midi::Channel channel = currentKnob.CHANNEL > 0 && currentKnob.CHANNEL < 17 ? currentKnob.CHANNEL : activePreset.channel;
-
-  if (currentKnob.highResolution)
+  isEEPROMvalid();
+  if (currentKnob.MODE == KNOB_MODE_HIRES)
   {
     MIDICoreSerial.sendControlChange(currentKnob.MSB, MSBvalue, channel);
     MIDICoreSerial.sendControlChange(currentKnob.LSB, LSBvalue, channel);
@@ -86,7 +87,7 @@ void sendCCMessage(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t L
   n32b_display.blinkDot(1);
 }
 
-void sendDualCCMessage(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue)
+void sendDualCCMessage(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue, midi::Channel channel)
 {
   // Serial.println("sendCCMessage");
   // Serial.print("currentKnob.MSB: ");
@@ -98,8 +99,6 @@ void sendDualCCMessage(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8
   // Serial.print("MSBvalue: ");
   // Serial.println(MSBvalue);
   // Serial.println("-------------");
-
-  midi::Channel channel = currentKnob.CHANNEL > 0 && currentKnob.CHANNEL < 17 ? currentKnob.CHANNEL : activePreset.channel;
 
   // Serial.print("sendCC, channel: ");
   // Serial.println(channel);
@@ -114,10 +113,8 @@ void sendDualCCMessage(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8
   n32b_display.blinkDot(1);
 }
 
-void sendNRPM(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue)
+void sendNRPM(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue, midi::Channel channel)
 {
-  midi::Channel channel = currentKnob.CHANNEL > 0 && currentKnob.CHANNEL < 17 ? currentKnob.CHANNEL : activePreset.channel;
-
   MIDICoreSerial.sendControlChange(99, currentKnob.MSB & 0x7F, channel); // NRPN MSB
   MIDICoreUSB.sendControlChange(99, currentKnob.MSB & 0x7F, channel);    // NRPN MSB
 
@@ -127,7 +124,7 @@ void sendNRPM(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBval
   MIDICoreSerial.sendControlChange(6, MSBvalue, channel); // Data Entry MSB
   MIDICoreUSB.sendControlChange(6, MSBvalue, channel);    // Data Entry MSB
 
-  if (currentKnob.highResolution)
+  if (currentKnob.MODE == KNOB_MODE_HIRES)
   {
     MIDICoreSerial.sendControlChange(38, MSBvalue, channel); // LSB for Control 6 (Data Entry)
     MIDICoreUSB.sendControlChange(38, MSBvalue, channel);    // LSB for Control 6 (Data Entry)
@@ -135,10 +132,8 @@ void sendNRPM(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBval
   n32b_display.blinkDot(1);
 }
 
-void sendRPM(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue)
+void sendRPM(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue, midi::Channel channel)
 {
-  midi::Channel channel = currentKnob.CHANNEL > 0 && currentKnob.CHANNEL < 17 ? currentKnob.CHANNEL : activePreset.channel;
-
   MIDICoreSerial.sendControlChange(101, currentKnob.MSB & 0x7F, channel); // RPN MSB
   MIDICoreUSB.sendControlChange(101, currentKnob.MSB & 0x7F, channel);    // RPN MSB
 
@@ -148,7 +143,7 @@ void sendRPM(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalu
   MIDICoreSerial.sendControlChange(6, MSBvalue, channel); // Data Entry MSB
   MIDICoreUSB.sendControlChange(6, MSBvalue, channel);    // Data Entry MSB
 
-  if (currentKnob.highResolution)
+  if (currentKnob.MODE == KNOB_MODE_HIRES)
   {
     MIDICoreSerial.sendControlChange(38, MSBvalue, channel); // LSB for Control 6 (Data Entry)
     MIDICoreUSB.sendControlChange(38, MSBvalue, channel);    // LSB for Control 6 (Data Entry)
@@ -181,7 +176,7 @@ void changePreset(bool direction)
   if (direction)
   {
     // Next Preset
-    if (currentPresetNumber < 4)
+    if (currentPresetNumber < NUMBER_OF_PRESETS - 1)
       loadPreset(currentPresetNumber + 1);
     else
       loadPreset(0);
@@ -192,7 +187,7 @@ void changePreset(bool direction)
     if (currentPresetNumber > 0)
       loadPreset(currentPresetNumber - 1);
     else
-      loadPreset(4);
+      loadPreset(NUMBER_OF_PRESETS - 1);
   }
   // MIDICoreSerial.sendProgramChange(currentPresetNumber, 1);
   // MIDICoreUSB.sendProgramChange(currentPresetNumber, 1);
