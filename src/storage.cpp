@@ -10,15 +10,13 @@
 // Check device version
 bool isEEPROMvalid()
 {
-  bool isValid = false;
-
   for (uint8_t i = 3; i > 0; i--)
   {
     uint8_t byte = EEPROM.read(EEPROM.length() - i);
     uint8_t versionDigit = pgm_read_word_near(firmwareVersion + i - 1);
-    isValid = byte == versionDigit;
+    if (!(byte == versionDigit)) return false;
   }
-  return isValid;
+  return true;
 }
 
 void formatFactory()

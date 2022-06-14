@@ -70,7 +70,6 @@ void updateKnob(uint8_t index, bool inhibit)
 
 void sendCCMessage(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue, midi::Channel channel)
 {
-  isEEPROMvalid();
   if (currentKnob.MODE == KNOB_MODE_HIRES)
   {
     MIDICoreSerial.sendControlChange(currentKnob.MSB, MSBvalue, channel);
