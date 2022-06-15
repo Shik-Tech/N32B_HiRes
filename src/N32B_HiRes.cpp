@@ -1,5 +1,5 @@
 /*
-  N32B Hi Res Firmware v3.5.2
+  N32B Hi Res Firmware v3.6.0
   MIT License
 
   Copyright (c) 2022 SHIK

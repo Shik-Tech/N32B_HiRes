@@ -1,5 +1,5 @@
 /*
-  N32B Hi Res Firmware v3.5.2
+  N32B Hi Res Firmware v3.6.0
   MIT License
 
   Copyright (c) 2022 SHIK
@@ -21,7 +21,7 @@
 
 USING_NAMESPACE_MIDI;
 
-const uint8_t firmwareVersion[] PROGMEM = {3, 5, 46};
+const uint8_t firmwareVersion[] PROGMEM = {3, 6, 0};
 
 extern MidiInterface<USBMIDI_NAMESPACE::usbMidiTransport> MIDICoreUSB;
 extern MIDI_NAMESPACE::MidiInterface<MIDI_NAMESPACE::SerialMIDI<HardwareSerial>> MIDICoreSerial;
@@ -61,7 +61,8 @@ enum COMMANDS_INDEXS
   KNOB_INDEX = 3,
   MSB_INDEX = 4,
   LSB_INDEX = 5,
-  CHANNEL_INDEX = 6
+  CHANNEL_INDEX = 6,
+  MODE_INDEX = 7
 };
 
 enum COMMANDS
@@ -72,22 +73,23 @@ enum COMMANDS
   SET_KNOB_AS_RPN = 4,        // RPN
   SET_KNOB_AS_DUAL = 15,      // DUAL mode (2 CC messages per knob)
   SET_KNOB_AS_INVERTED = 16,  // Invert knob values
+  SET_KNOB_MODE = 10,         // Use 7-bit or 14-bit midi messages
   SAVE_PRESET = 5,            // Save the preset
   LOAD_PRESET = 6,            // Load a preset
   SEND_CURRENT_CONFIG = 7,    // Send the current config
   SYNC_KNOBS = 8,             // Forces the emission of the messages associated to every knob
   CHANGE_CHANNEL = 9,         // Changes the global MIDI channel
   DISABLE_KNOB = 11,          // Disable
-  HIGH_RES_14BIT = 14         // Use 7-bit or 14-bit midi messages
 };
 
 enum KNOB_MODES
 {
-  KNOB_MODE_STANDARD = 0,
-  KNOB_MODE_DUAL = 1,
-  KNOB_MODE_NRPN = 2,
-  KNOB_MODE_RPN = 3,
-  KNOB_MODE_HIRES = 4
+  KNOB_MODE_DISABLE = 0,
+  KNOB_MODE_STANDARD = 1,
+  KNOB_MODE_DUAL = 2,
+  KNOB_MODE_NRPN = 3,
+  KNOB_MODE_RPN = 4,
+  KNOB_MODE_HIRES = 5
 };
 
 // General definitions
