@@ -18,6 +18,8 @@ void processSysex(unsigned char *data, unsigned int size)
             activePreset.knobInfo[data[KNOB_INDEX]].LSB = data[LSB_INDEX];
             activePreset.knobInfo[data[KNOB_INDEX]].CHANNEL = data[CHANNEL_INDEX];
             activePreset.knobInfo[data[KNOB_INDEX]].MODE = data[MODE_INDEX];
+            activePreset.knobInfo[data[KNOB_INDEX]].INVERT_A = data[INVERT_A_INDEX];
+            activePreset.knobInfo[data[KNOB_INDEX]].INVERT_B = data[INVERT_B_INDEX];
             break;
         case SAVE_PRESET:
             savePreset(data[KNOB_INDEX]);

@@ -62,24 +62,20 @@ enum COMMANDS_INDEXS
   MSB_INDEX = 4,
   LSB_INDEX = 5,
   CHANNEL_INDEX = 6,
-  MODE_INDEX = 7
+  MODE_INDEX = 7,
+  INVERT_A_INDEX = 8,
+  INVERT_B_INDEX = 9
 };
 
 enum COMMANDS
 {
-  SET_KNOB_AS_CC = 1,         // CC
-  SET_KNOB_AS_CC_CHANNEL = 2, // CC & Channel
-  SET_KNOB_AS_NRPN = 3,       // NRPN
-  SET_KNOB_AS_RPN = 4,        // RPN
-  SET_KNOB_AS_DUAL = 15,      // DUAL mode (2 CC messages per knob)
-  SET_KNOB_AS_INVERTED = 16,  // Invert knob values
-  SET_KNOB_MODE = 10,         // Use 7-bit or 14-bit midi messages
-  SAVE_PRESET = 5,            // Save the preset
-  LOAD_PRESET = 6,            // Load a preset
-  SEND_CURRENT_CONFIG = 7,    // Send the current config
-  SYNC_KNOBS = 8,             // Forces the emission of the messages associated to every knob
-  CHANGE_CHANNEL = 9,         // Changes the global MIDI channel
-  DISABLE_KNOB = 11,          // Disable
+  SET_KNOB_MODE = 10,      // Define knob mode (see KNOB_MODES)
+  SAVE_PRESET = 5,         // Save the preset
+  LOAD_PRESET = 6,         // Load a preset
+  SEND_CURRENT_CONFIG = 7, // Send the current config
+  SYNC_KNOBS = 8,          // Forces the emission of the messages associated to every knob
+  CHANGE_CHANNEL = 9,      // Changes the global MIDI channel
+  DISABLE_KNOB = 11,       // Disable
 };
 
 enum KNOB_MODES
