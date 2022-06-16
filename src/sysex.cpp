@@ -32,8 +32,8 @@ void processSysex(unsigned char *data, unsigned int size)
         case CHANGE_CHANNEL:
             handleChangeChannel(data[KNOB_INDEX]);
             break;
-        case SEND_CURRENT_CONFIG:
-            break;
+        // case SEND_CURRENT_CONFIG:
+        //     break;
         default:
             break;
         }
