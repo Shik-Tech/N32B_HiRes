@@ -32,8 +32,9 @@ void processSysex(unsigned char *data, unsigned int size)
         case CHANGE_CHANNEL:
             handleChangeChannel(data[KNOB_INDEX]);
             break;
-        // case SEND_CURRENT_CONFIG:
-        //     break;
+        case SEND_CURRENT_CONFIG:
+            sendDeviceConfig();
+            break;
         default:
             break;
         }
@@ -59,4 +60,8 @@ void handleProgramChange(byte channel, byte number)
     {
         loadPreset(number);
     }
+}
+
+void sendDeviceConfig()
+{
 }

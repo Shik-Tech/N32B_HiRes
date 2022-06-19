@@ -18,5 +18,6 @@
 void processSysex(unsigned char *, unsigned int);
 void handleChangeChannel(byte);
 void handleProgramChange(byte, byte);
+void sendDeviceConfig();
 
 #endif
