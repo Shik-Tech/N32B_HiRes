@@ -48,7 +48,7 @@ void N32B_DISPLAY::showChannelNumber(uint8_t channelNumber)
 void N32B_DISPLAY::showPresetNumber(uint8_t presetNumber)
 {
     clear();
-    printDigit(presetNumber);
+    printDigit(presetNumber + 1);
     write(2, B01100111);
     displayOffTimer = millis();
 }

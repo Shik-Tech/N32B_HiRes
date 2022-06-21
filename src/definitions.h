@@ -52,7 +52,7 @@ enum COMMANDS_INDEXS
 {
   MANUFACTURER_INDEX = 1,
   COMMAND_INDEX = 2,
-  KNOB_INDEX = 3,
+  KNOB_INDEX = 3, // Also used for other commands value
   MSB_INDEX = 4,
   LSB_INDEX = 5,
   CHANNEL_INDEX = 6,
