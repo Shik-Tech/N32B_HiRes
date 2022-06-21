@@ -11,6 +11,10 @@
         "vector": "cpp",
         "istream": "cpp",
         "functional": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "bitset": "cpp",
+        "sstream": "cpp",
+        "string": "cpp",
+        "valarray": "cpp"
     }
 }

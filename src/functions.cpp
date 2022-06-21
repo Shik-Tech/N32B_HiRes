@@ -23,7 +23,7 @@ void onSerialMessage(const midi::Message<128> &message)
   }
 }
 
-void updateKnob(uint8_t index, bool inhibit)
+void updateKnob(uint8_t index)
 {
   Knob_t &currentKnob = activePreset.knobInfo[index];
   bool needToUpdate = false;
@@ -64,30 +64,30 @@ void updateKnob(uint8_t index, bool inhibit)
   {
     midi::Channel channel = currentKnob.CHANNEL > 0 && currentKnob.CHANNEL < 17 ? currentKnob.CHANNEL : activePreset.channel;
 
-    if (!inhibit)
+    switch (currentKnob.MODE)
     {
-      switch (currentKnob.MODE)
-      {
-      case KNOB_MODE_STANDARD:
-      case KNOB_MODE_HIRES:
-        sendCCMessage(currentKnob, MSBValue, LSBValue, channel);
-        break;
+    case KNOB_MODE_STANDARD:
+    case KNOB_MODE_HIRES:
+      sendCCMessage(currentKnob, MSBValue, LSBValue, channel);
+      break;
 
-      case KNOB_MODE_DUAL:
-        sendDualCCMessage(currentKnob, MSBValue, channel);
-        break;
+    case KNOB_MODE_DUAL:
+      sendDualCCMessage(currentKnob, MSBValue, channel);
+      break;
 
-      case KNOB_MODE_NRPN:
-        sendNRPM(currentKnob, MSBValue, channel);
-        break;
+    case KNOB_MODE_NRPN:
+      sendNRPM(currentKnob, MSBValue, channel);
+      break;
 
-      case KNOB_MODE_RPN:
-        sendRPM(currentKnob, MSBValue, channel);
-        break;
+    case KNOB_MODE_RPN:
+      sendRPM(currentKnob, MSBValue, channel);
+      break;
 
-      default:
-        break;
-      }
+    case KNOB_SYSEX:
+      sendSysEx(currentKnob, MSBValue, LSBValue);
+
+    default:
+      break;
     }
 
     knobValues[index][3] = knobValues[index][2];
@@ -159,6 +159,13 @@ void sendRPM(const struct Knob_t &currentKnob, uint8_t MSBvalue, midi::Channel c
   n32b_display.blinkDot(1);
 }
 
+void sendSysEx(const struct Knob_t &currentKnob, uint8_t MSBvalue, uint8_t LSBvalue)
+{
+  // TODO: Enter MSB/LSB Values into the sysExData
+  // MIDICoreSerial.sendSysEx(sizeof(currentKnob.sysExData), currentKnob.sysExData);
+  // MIDICoreUSB.sendSysEx(sizeof(currentKnob.sysExData), currentKnob.sysExData);
+}
+
 void changeChannel(bool direction)
 {
   if (direction)
@@ -210,12 +217,12 @@ void buttonReleaseAction(bool direction)
     if (isPresetMode)
     {
       changePreset(direction);
-      n32b_display.showPresetNumber(currentPresetNumber, disableKnobs);
+      n32b_display.showPresetNumber(currentPresetNumber);
     }
     else
     {
       changeChannel(direction);
-      n32b_display.showChannelNumber(activePreset.channel, disableKnobs);
+      n32b_display.showChannelNumber(activePreset.channel);
     }
   }
 
@@ -266,12 +273,12 @@ void renderButtonFunctions()
     if (isPressingAButton)
     {
       isPresetMode = false;
-      n32b_display.showChannelNumber(activePreset.channel, disableKnobs);
+      n32b_display.showChannelNumber(activePreset.channel);
     }
     if (isPressingBButton)
     {
       isPresetMode = true;
-      n32b_display.showPresetNumber(currentPresetNumber, disableKnobs);
+      n32b_display.showPresetNumber(currentPresetNumber);
     }
   }
 }

@@ -19,12 +19,13 @@ USING_NAMESPACE_MIDI;
 void onUsbMessage(const midi::Message<128> &);
 void onSerialMessage(const midi::Message<128> &);
 
-void updateKnob(uint8_t, bool);
+void updateKnob(uint8_t);
 
 void sendCCMessage(const struct Knob_t &, uint8_t, uint8_t, midi::Channel);
 void sendDualCCMessage(const struct Knob_t &, uint8_t, midi::Channel);
 void sendRPM(const struct Knob_t &, uint8_t, midi::Channel);
 void sendNRPM(const struct Knob_t &, uint8_t, midi::Channel);
+void sendSysEx(const struct Knob_t &, uint8_t, uint8_t);
 
 void changeChannel(bool);
 void changePreset(bool);

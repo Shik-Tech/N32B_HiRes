@@ -114,10 +114,10 @@ void loop()
   for (uint8_t currentKnob = 0; currentKnob < NUMBER_OF_KNOBS; currentKnob++)
   {
     muxFactory.update(currentKnob);
-    updateKnob(currentKnob, disableKnobs);
+    updateKnob(currentKnob);
   }
   doMidiRead();
 
   renderButtonFunctions();
-  n32b_display.clearDisplay(disableKnobs);
+  n32b_display.clearDisplay();
 }

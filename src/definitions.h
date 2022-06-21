@@ -48,12 +48,6 @@ enum PINS
   BUTTON_B_PIN = A2
 };
 
-// Reset to factory preset timeout
-extern const unsigned int reset_timeout;
-
-// SYSEX constants
-extern const uint8_t SHIK_MANUFACTURER_ID;
-
 enum COMMANDS_INDEXS
 {
   MANUFACTURER = 1,
@@ -64,7 +58,8 @@ enum COMMANDS_INDEXS
   CHANNEL_INDEX = 6,
   MODE_INDEX = 7,
   INVERT_A_INDEX = 8,
-  INVERT_B_INDEX = 9
+  INVERT_B_INDEX = 9,
+  SYSEX_INDEX = 10
 };
 
 enum COMMANDS
@@ -84,12 +79,17 @@ enum KNOB_MODES
   KNOB_MODE_DUAL = 2,
   KNOB_MODE_NRPN = 3,
   KNOB_MODE_RPN = 4,
-  KNOB_MODE_HIRES = 5
+  KNOB_MODE_HIRES = 5,
+  KNOB_SYSEX = 6
 };
 
 // General definitions
-extern const uint8_t NUMBER_OF_KNOBS;
-extern const uint8_t NUMBER_OF_PRESETS;
+enum DEFINITIONS
+{
+  SHIK_MANUFACTURER_ID = 32,
+  NUMBER_OF_KNOBS = 32,
+  NUMBER_OF_PRESETS = 5
+};
 
 // Knob settings structure
 struct Knob_t
@@ -100,6 +100,7 @@ struct Knob_t
   uint8_t MODE;
   bool INVERT_A;
   bool INVERT_B;
+  // byte sysExData[8];
 };
 
 // A preset struct is defining the device preset structure
@@ -114,10 +115,10 @@ extern byte currentPresetNumber;
 extern Preset_t activePreset;
 extern uint16_t knobValues[32][4];
 extern float EMA_a; // EMA alpha
-extern bool disableKnobs;
 
 /* Buttons variables */
-extern const uint8_t SHORT_PRESS_TIME; // Milliseconds
+extern const unsigned int reset_timeout; // Reset to factory preset timeout
+extern const uint8_t SHORT_PRESS_TIME;   // Milliseconds
 extern unsigned long pressedTime;
 extern bool isPressingAButton;
 extern bool isPressingBButton;
