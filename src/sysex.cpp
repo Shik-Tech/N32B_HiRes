@@ -9,7 +9,7 @@
 
 void processSysex(unsigned char *data, unsigned int size)
 {
-    if (size > 3 && data[MANUFACTURER_INDEX] == SHIK_MANUFACTURER_ID && data[KNOB_INDEX] < NUMBER_OF_KNOBS)
+    if (size > 3 && data[MANUFACTURER_INDEX] == SHIK_MANUFACTURER_ID)
     {
         switch (data[COMMAND_INDEX])
         {
@@ -92,4 +92,29 @@ void handleProgramChange(byte channel, byte number)
 
 void sendDeviceConfig()
 {
+    uint8_t data[5] = {SHIK_MANUFACTURER_ID, SEND_CURRENT_CONFIG};
+
+    // Send firmware version
+    for (uint8_t i = 3; i > 0; i--)
+    {
+        data[i + 1] = EEPROM.read(EEPROM.length() - i);
+    }
+    MIDICoreUSB.sendSysEx(5, data);
+
+    // Send current preset
+    for (uint8_t i = 0; i < NUMBER_OF_KNOBS; i++)
+    {
+        uint8_t indexId = pgm_read_word_near(knobsLocation + i);
+        uint8_t presetData[9] = {
+            SHIK_MANUFACTURER_ID,
+            SYNC_KNOBS,
+            pgm_read_word_near(knobsLocation + i),
+            activePreset.knobInfo[indexId].MSB,
+            activePreset.knobInfo[indexId].LSB,
+            activePreset.knobInfo[indexId].CHANNEL,
+            activePreset.knobInfo[indexId].MODE,
+            activePreset.knobInfo[indexId].INVERT_A,
+            activePreset.knobInfo[indexId].INVERT_B};
+        MIDICoreUSB.sendSysEx(9, presetData);
+    }
 }
