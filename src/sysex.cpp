@@ -9,9 +9,9 @@
 
 void processSysex(unsigned char *data, unsigned int size)
 {
-    if (size > 3 && data[MANUFACTURER] == SHIK_MANUFACTURER_ID && data[KNOB_INDEX] < NUMBER_OF_KNOBS)
+    if (size > 3 && data[MANUFACTURER_INDEX] == SHIK_MANUFACTURER_ID && data[KNOB_INDEX] < NUMBER_OF_KNOBS)
     {
-        switch (data[COMMAND])
+        switch (data[COMMAND_INDEX])
         {
         case SET_KNOB_MODE:
             activePreset.knobInfo[data[KNOB_INDEX]].MODE = data[MODE_INDEX];
