@@ -55,13 +55,14 @@ void processSysex(unsigned char *data, unsigned int size)
         case LOAD_PRESET:
             loadPreset(data[KNOB_INDEX]);
             break;
-        case SYNC_KNOBS:
-            break;
         case CHANGE_CHANNEL:
             handleChangeChannel(data[KNOB_INDEX]);
             break;
-        case SEND_CURRENT_CONFIG:
-            sendDeviceConfig();
+        case SEND_FIRMWARE_VERSION:
+            sendDeviceFirmwareVersion();
+            break;
+        case SYNC_KNOBS:
+            sendActivePreset();
             break;
         default:
             break;
@@ -90,9 +91,9 @@ void handleProgramChange(byte channel, byte number)
     }
 }
 
-void sendDeviceConfig()
+void sendDeviceFirmwareVersion()
 {
-    uint8_t data[5] = {SHIK_MANUFACTURER_ID, SEND_CURRENT_CONFIG};
+    uint8_t data[5] = {SHIK_MANUFACTURER_ID, SEND_FIRMWARE_VERSION};
 
     // Send firmware version
     for (uint8_t i = 3; i > 0; i--)
@@ -100,7 +101,8 @@ void sendDeviceConfig()
         data[i + 1] = EEPROM.read(EEPROM.length() - i);
     }
     MIDICoreUSB.sendSysEx(5, data);
-
+}
+void sendActivePreset() {
     // Send current preset
     for (uint8_t i = 0; i < NUMBER_OF_KNOBS; i++)
     {

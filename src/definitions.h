@@ -64,12 +64,12 @@ enum COMMANDS_INDEXS
 
 enum COMMANDS
 {
-  SET_KNOB_MODE = 1,       // Define knob mode (see KNOB_MODES)
-  SAVE_PRESET = 2,         // Save the preset
-  LOAD_PRESET = 3,         // Load a preset
-  SEND_CURRENT_CONFIG = 4, // Send the current config
-  SYNC_KNOBS = 5,          // Forces the emission of the messages associated to every knob
-  CHANGE_CHANNEL = 6       // Changes the global MIDI channel
+  SET_KNOB_MODE = 1,         // Define knob mode (see KNOB_MODES)
+  SAVE_PRESET = 2,           // Save the preset
+  LOAD_PRESET = 3,           // Load a preset
+  SEND_FIRMWARE_VERSION = 4, // Send the device firmware version
+  SYNC_KNOBS = 5,            // Send active preset
+  CHANGE_CHANNEL = 6         // Changes the global MIDI channel
 };
 
 enum KNOB_MODES
