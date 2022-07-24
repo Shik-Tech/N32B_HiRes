@@ -1,5 +1,5 @@
 /*
-  N32B Hi Res Firmware v3.5.2
+  N32B Hi Res Firmware v3.6.0
   MIT License
 
   Copyright (c) 2022 SHIK
@@ -71,7 +71,7 @@ void setup()
   // Write the factory presets to memory if the device was turn on for the first time
   if (!isEEPROMvalid())
   {
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < NUMBER_OF_PRESETS; i++)
     {
       digitalWrite(LED_PIN, HIGH);
       delay(300);
@@ -114,10 +114,10 @@ void loop()
   for (uint8_t currentKnob = 0; currentKnob < NUMBER_OF_KNOBS; currentKnob++)
   {
     muxFactory.update(currentKnob);
-    updateKnob(currentKnob, disableKnobs);
+    updateKnob(currentKnob);
   }
   doMidiRead();
 
   renderButtonFunctions();
-  n32b_display.clearDisplay(disableKnobs);
+  n32b_display.clearDisplay();
 }

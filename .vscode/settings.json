@@ -1,0 +1,20 @@
+{
+    "files.associations": {
+        "*.cps": "javascript",
+        "*.h": "cpp",
+        "associative_base": "cpp",
+        "deque": "cpp",
+        "initializer_list": "cpp",
+        "iterator": "cpp",
+        "list": "cpp",
+        "serstream": "cpp",
+        "vector": "cpp",
+        "istream": "cpp",
+        "functional": "cpp",
+        "type_traits": "cpp",
+        "bitset": "cpp",
+        "sstream": "cpp",
+        "string": "cpp",
+        "valarray": "cpp"
+    }
+}

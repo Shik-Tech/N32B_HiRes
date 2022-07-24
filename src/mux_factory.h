@@ -1,5 +1,5 @@
 /*
-  N32B Hi Res Firmware v3.5.2
+  N32B Hi Res Firmware v3.6.0
   MIT License
 
   Copyright (c) 2022 SHIK
@@ -17,11 +17,11 @@ class MUX_FACTORY
 {
 public:
   MUX_FACTORY();
-  void init(uint8_t channel1, uint8_t channel2, uint8_t channel3, uint8_t channel4);
-  void setSignalPin(bool muxIndex, uint8_t pin);
-  void update(uint8_t);
-  void setMultiplexer(uint8_t);
-  uint16_t read(uint8_t);
+  void init(const uint8_t &, const uint8_t &, const uint8_t &, const uint8_t &);
+  void setSignalPin(const bool &, const uint8_t &);
+  void update(uint8_t &);
+  void setMultiplexer(uint8_t &);
+  uint16_t read(uint8_t &);
 
 private:
   uint8_t channels[4];

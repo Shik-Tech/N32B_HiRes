@@ -1,5 +1,5 @@
 /*
-  N32B Hi Res Firmware v3.5.2
+  N32B Hi Res Firmware v3.6.0
   MIT License
 
   Copyright (c) 2022 SHIK
@@ -21,6 +21,8 @@
 
 USING_NAMESPACE_MIDI;
 
+const uint8_t firmwareVersion[] PROGMEM = {3, 6, 0};
+
 extern MidiInterface<USBMIDI_NAMESPACE::usbMidiTransport> MIDICoreUSB;
 extern MIDI_NAMESPACE::MidiInterface<MIDI_NAMESPACE::SerialMIDI<HardwareSerial>> MIDICoreSerial;
 extern MUX_FACTORY muxFactory;
@@ -29,71 +31,83 @@ extern ezButton buttonA;
 extern ezButton buttonB;
 
 /* Pin setup */
-extern const uint8_t MUX_A_SIG;
-extern const uint8_t MUX_B_SIG;
-extern const uint8_t MIDI_TX_PIN;
-extern const uint8_t MUX_S0;
-extern const uint8_t MUX_S1;
-extern const uint8_t MUX_S2;
-extern const uint8_t MUX_S3;
-extern const uint8_t LED_PIN;
-extern const uint8_t BUTTON_A_PIN;
-extern const uint8_t BUTTON_B_PIN;
+enum PINS
+{
+  MUX_A_SIG = 8,
+  MUX_B_SIG = 9,
+  MIDI_TX_PIN = 1,
+  MUX_S0 = 2,
+  MUX_S1 = 3,
+  MUX_S2 = 4,
+  MUX_S3 = 5,
+  LED_PIN = 17,
+  DIN = 16,
+  CS = 10,
+  CLK = 15,
+  BUTTON_A_PIN = A3,
+  BUTTON_B_PIN = A2
+};
 
-// Reset to factory preset timeout
-extern const unsigned int reset_timeout;
+enum COMMANDS_INDEXS
+{
+  MANUFACTURER_INDEX = 1,
+  COMMAND_INDEX = 2,
+  KNOB_INDEX = 3, // Also used for other commands value
+  MSB_INDEX = 4,
+  LSB_INDEX = 5,
+  CHANNEL_INDEX = 6,
+  MODE_INDEX = 7,
+  INVERT_A_INDEX = 8,
+  INVERT_B_INDEX = 9,
+  SYSEX_INDEX = 10
+};
 
-/*--- EEPROM Format Chuncks ---*/
-// Change these any time the data structure of a preset changed
-// This will trigger reformatting on the next startup
-extern const uint8_t MAJOR_VERSION;
-extern const uint8_t MINOR_VERSION;
-extern const uint8_t POINT_VERSION;
+enum COMMANDS
+{
+  SET_KNOB_MODE = 1,         // Define knob mode (see KNOB_MODES)
+  SAVE_PRESET = 2,           // Save the preset
+  LOAD_PRESET = 3,           // Load a preset
+  SEND_FIRMWARE_VERSION = 4, // Send the device firmware version
+  SYNC_KNOBS = 5,            // Send active preset
+  CHANGE_CHANNEL = 6         // Changes the global MIDI channel
+};
 
-// SYSEX constants
-extern const uint8_t SHIK_MANUFACTURER_ID;
-
-extern const uint8_t MANUFACTURER;
-extern const uint8_t COMMAND;
-extern const uint8_t KNOB_INDEX;
-extern const uint8_t MSB_INDEX;
-extern const uint8_t LSB_INDEX;
-extern const uint8_t CHANNEL_INDEX;
-
-extern const uint8_t SET_KNOB_AS_CC;         // CC
-extern const uint8_t SET_KNOB_AS_CC_CHANNEL; // CC & Channel
-extern const uint8_t SET_KNOB_AS_NRPN;       // NRPN
-extern const uint8_t SAVE_PRESET;            // Save the preset
-extern const uint8_t LOAD_PRESET;            // Load a preset
-extern const uint8_t SEND_CURRENT_CONFIG;    // Send the current config
-extern const uint8_t SYNC_KNOBS;             // Forces the emission of the messages associated to every knob
-extern const uint8_t CHANGE_CHANNEL;         // Changes the global MIDI channel
-extern const uint8_t DISABLE_KNOB;           // Disable
-extern const uint8_t HIGH_RES_14BIT;         // Use 7-bit or 14-bit midi messages
+enum KNOB_MODES
+{
+  KNOB_MODE_DISABLE = 0,
+  KNOB_MODE_STANDARD = 1,
+  KNOB_MODE_DUAL = 2,
+  KNOB_MODE_NRPN = 3,
+  KNOB_MODE_RPN = 4,
+  KNOB_MODE_HIRES = 5,
+  KNOB_SYSEX = 6
+};
 
 // General definitions
-extern const uint8_t NUMBER_OF_KNOBS;
-extern const uint8_t NUMBER_OF_PRESETS;
+enum DEFINITIONS
+{
+  SHIK_MANUFACTURER_ID = 32,
+  NUMBER_OF_KNOBS = 32,
+  NUMBER_OF_PRESETS = 5
+};
+
+// Knob settings structure
+struct Knob_t
+{
+  uint8_t MSB;
+  uint8_t LSB;
+  midi::Channel CHANNEL;
+  uint8_t MODE;
+  bool INVERT_A;
+  bool INVERT_B;
+  // byte sysExData[8];
+};
 
 // A preset struct is defining the device preset structure
 struct Preset_t
 {
-
-  // channel the device is sending on
   midi::Channel channel;
-
-  // Knob settings structure
-  struct Knob_t
-  {
-    uint8_t MSB;
-    uint8_t LSB;
-    midi::Channel CHANNEL;
-    bool NRPN;
-    // bool RPN;
-  } knobInfo[32];
-
-  // High resolution 14-bit
-  bool highResolution;
+  Knob_t knobInfo[32];
 };
 
 /* Device setup data */
@@ -101,10 +115,10 @@ extern byte currentPresetNumber;
 extern Preset_t activePreset;
 extern uint16_t knobValues[32][4];
 extern float EMA_a; // EMA alpha
-extern bool disableKnobs;
 
 /* Buttons variables */
-extern const uint8_t SHORT_PRESS_TIME; // Milliseconds
+extern const unsigned int reset_timeout; // Reset to factory preset timeout
+extern const uint8_t SHORT_PRESS_TIME;   // Milliseconds
 extern unsigned long pressedTime;
 extern bool isPressingAButton;
 extern bool isPressingBButton;

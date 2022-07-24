@@ -1,5 +1,5 @@
 /*
-  N32B Hi Res Firmware v3.5.2
+  N32B Hi Res Firmware v3.6.0
   MIT License
 
   Copyright (c) 2022 SHIK
@@ -9,104 +9,69 @@
 
 void processSysex(unsigned char *data, unsigned int size)
 {
-    if (size > 3 && data[MANUFACTURER] == SHIK_MANUFACTURER_ID)
+    if (size > 3 && data[MANUFACTURER_INDEX] == SHIK_MANUFACTURER_ID)
     {
-        if (data[COMMAND] == SET_KNOB_AS_CC)
+        switch (data[COMMAND_INDEX])
         {
-            setKnobAsCC(data[KNOB_INDEX], data[MSB_INDEX], data[LSB_INDEX]);
-        }
-        if (data[COMMAND] == SET_KNOB_AS_CC_CHANNEL)
-        {
-            setKnobAsCCWithChannel(data[KNOB_INDEX], data[MSB_INDEX], data[LSB_INDEX], data[CHANNEL_INDEX]);
-        }
-        if (data[COMMAND] == SET_KNOB_AS_NRPN)
-        {
-            setKnobAsNRPN(data[KNOB_INDEX], data[MSB_INDEX], data[LSB_INDEX]);
-        }
-        if (data[COMMAND] == DISABLE_KNOB)
-        {
-            setKnobAsDisabled(data[KNOB_INDEX]);
-        }
-        if (data[COMMAND] == HIGH_RES_14BIT)
-        {
-            useHighResolution(data[KNOB_INDEX]);
-        }
-        if (data[COMMAND] == SAVE_PRESET)
-        {
+        case SET_KNOB_MODE:
+            activePreset.knobInfo[data[KNOB_INDEX]].MODE = data[MODE_INDEX];
+            if (data[MODE_INDEX] != KNOB_SYSEX)
+            {
+                activePreset.knobInfo[data[KNOB_INDEX]].MSB = data[MSB_INDEX];
+                activePreset.knobInfo[data[KNOB_INDEX]].LSB = data[LSB_INDEX];
+                activePreset.knobInfo[data[KNOB_INDEX]].CHANNEL = data[CHANNEL_INDEX];
+                activePreset.knobInfo[data[KNOB_INDEX]].INVERT_A = data[INVERT_A_INDEX];
+                activePreset.knobInfo[data[KNOB_INDEX]].INVERT_B = data[INVERT_B_INDEX];
+            }
+            else
+            {
+                // activePreset.knobInfo[data[KNOB_INDEX]].MSB = midi::encodeSysEx(&data[SYSEX_INDEX], activePreset.knobInfo[data[KNOB_INDEX]].sysExData, sizeof(data[SYSEX_INDEX]));
+
+                /*
+                 * TODO: handle Korg special case:
+                 * https://github.com/FortySevenEffects/arduino_midi_library/blob/master/doc/sysex-codec.md
+                 */
+                // void handleSysEx(byte * inData, unsigned inSize)
+                // {
+                //     // SysEx body data starts at 3rd byte: F0 42 aa bb cc dd F7
+                //     // 42 being the hex value of the Korg SysEx ID.
+                //     const unsigned dataStartOffset = 2;
+                //     const unsigned encodedDataLength = inSize - 3; // Remove F0 42 & F7
+
+                //     // Create a large enough buffer where to decode the message
+                //     byte decodedData[64];
+
+                //     const unsigned decodedSize = decodeSysEx(inData + dataStartOffset,
+                //                                              decodedData,
+                //                                              encodedDataLength,
+                //                                              true); // flip header bits
+                //     // Do stuff with your message
+                // }
+            }
+            break;
+        case SAVE_PRESET:
             savePreset(data[KNOB_INDEX]);
-        }
-        if (data[COMMAND] == LOAD_PRESET)
-        {
+            break;
+        case LOAD_PRESET:
             loadPreset(data[KNOB_INDEX]);
-        }
-        // if (data[COMMAND] == SYNC_KNOBS)
-        // {
-        //     for (uint8_t i = 0; i < NUMBER_OF_KNOBS; i++)
-        //     {
-        //         interpretKnob(i, true, false);
-        //     }
-        // }
-        if (data[COMMAND] == CHANGE_CHANNEL)
-        {
+            break;
+        case CHANGE_CHANNEL:
             handleChangeChannel(data[KNOB_INDEX]);
-        }
-        if (data[COMMAND] == SEND_CURRENT_CONFIG)
-        {
-            // sendCurrentConfig();
+            break;
+        case SEND_FIRMWARE_VERSION:
+            sendDeviceFirmwareVersion();
+            break;
+        case SYNC_KNOBS:
+            sendActivePreset();
+            break;
+        default:
+            break;
         }
     }
     else
     {
         // Serial.println("Manufacturer ID is not matching the N32B");
     }
-}
-
-void setKnobAsCC(byte knobIndex, byte MSB, byte LSB)
-{
-    if (knobIndex < NUMBER_OF_KNOBS)
-    {
-        activePreset.knobInfo[knobIndex].MSB = MSB;
-        activePreset.knobInfo[knobIndex].LSB = LSB;
-        activePreset.knobInfo[knobIndex].NRPN = 0;
-        activePreset.knobInfo[knobIndex].CHANNEL = 128;
-    }
-}
-
-void setKnobAsCCWithChannel(byte knobIndex, byte MSB, byte LSB, byte channel)
-{
-    if (knobIndex < NUMBER_OF_KNOBS)
-    {
-        activePreset.knobInfo[knobIndex].MSB = MSB;
-        activePreset.knobInfo[knobIndex].LSB = LSB;
-        activePreset.knobInfo[knobIndex].NRPN = 0;
-        activePreset.knobInfo[knobIndex].CHANNEL = channel | 0x80;
-    }
-}
-
-void setKnobAsDisabled(byte knobIndex)
-{
-    if (knobIndex < NUMBER_OF_KNOBS)
-    {
-        activePreset.knobInfo[knobIndex].MSB = 0;
-        activePreset.knobInfo[knobIndex].NRPN = 0;
-        activePreset.knobInfo[knobIndex].CHANNEL = 17 | 0x80; // Make the knob out of range to disable it
-    }
-}
-
-void setKnobAsNRPN(byte knobIndex, byte LSB, byte MSB)
-{
-    if (knobIndex < NUMBER_OF_KNOBS)
-    {
-        activePreset.knobInfo[knobIndex].MSB = MSB;
-        activePreset.knobInfo[knobIndex].LSB = LSB;
-        activePreset.knobInfo[knobIndex].NRPN = 1;
-        activePreset.knobInfo[knobIndex].CHANNEL = 128;
-    }
-}
-
-void useHighResolution(bool value)
-{
-    activePreset.highResolution = value;
 }
 
 void handleChangeChannel(byte channel)
@@ -120,8 +85,38 @@ void handleChangeChannel(byte channel)
 // Change preset on program change
 void handleProgramChange(byte channel, byte number)
 {
-    if (number < 5)
+    if (number < NUMBER_OF_PRESETS)
     {
         loadPreset(number);
+    }
+}
+
+void sendDeviceFirmwareVersion()
+{
+    uint8_t data[5] = {SHIK_MANUFACTURER_ID, SEND_FIRMWARE_VERSION};
+
+    // Send firmware version
+    for (uint8_t i = 3; i > 0; i--)
+    {
+        data[i + 1] = EEPROM.read(EEPROM.length() - i);
+    }
+    MIDICoreUSB.sendSysEx(5, data);
+}
+void sendActivePreset() {
+    // Send current preset
+    for (uint8_t i = 0; i < NUMBER_OF_KNOBS; i++)
+    {
+        uint8_t indexId = pgm_read_word_near(knobsLocation + i);
+        uint8_t presetData[9] = {
+            SHIK_MANUFACTURER_ID,
+            SYNC_KNOBS,
+            pgm_read_word_near(knobsLocation + i),
+            activePreset.knobInfo[indexId].MSB,
+            activePreset.knobInfo[indexId].LSB,
+            activePreset.knobInfo[indexId].CHANNEL,
+            activePreset.knobInfo[indexId].MODE,
+            activePreset.knobInfo[indexId].INVERT_A,
+            activePreset.knobInfo[indexId].INVERT_B};
+        MIDICoreUSB.sendSysEx(9, presetData);
     }
 }

@@ -1,5 +1,5 @@
 /*
-  N32B Hi Res Firmware v3.5.2
+  N32B Hi Res Firmware v3.6.0
   MIT License
 
   Copyright (c) 2022 SHIK
@@ -7,17 +7,16 @@
 
 #include "storage.h"
 
-// Checks if the device is starting up for the first time
+// Check device version
 bool isEEPROMvalid()
 {
-  uint8_t byte1, byte2, byte3;
-
-  byte1 = EEPROM.read(EEPROM.length() - 3);
-  byte2 = EEPROM.read(EEPROM.length() - 2);
-  byte3 = EEPROM.read(EEPROM.length() - 1);
-
-  // Check device version
-  return ((byte1 == MAJOR_VERSION) && (byte2 == MINOR_VERSION) && (byte3 == POINT_VERSION));
+  for (uint8_t i = 3; i > 0; i--)
+  {
+    uint8_t byte = EEPROM.read(EEPROM.length() - i);
+    uint8_t versionDigit = pgm_read_word_near(firmwareVersion + i - 1);
+    if (!(byte == versionDigit)) return false;
+  }
+  return true;
 }
 
 void formatFactory()
@@ -29,20 +28,17 @@ void formatFactory()
   Preset_t defaultPreset;
   defaultPreset.channel = 1;
 
-  uint8_t knobsLocation[32] = {
-      15, 14, 12, 9, 31, 24, 20, 16,
-      13, 11, 10, 2, 30, 25, 21, 17,
-      8, 7, 4, 1, 29, 26, 22, 18,
-      6, 5, 3, 0, 28, 27, 23, 19};
-  for (uint8_t indexId = 0; indexId < 32; indexId++)
+  for (uint8_t i = 0; i < NUMBER_OF_KNOBS; i++)
   {
-    defaultPreset.knobInfo[knobsLocation[indexId]].MSB = indexId;
-    defaultPreset.knobInfo[knobsLocation[indexId]].LSB = indexId + 32;
-    defaultPreset.knobInfo[knobsLocation[indexId]].NRPN = 0;
-    defaultPreset.knobInfo[knobsLocation[indexId]].CHANNEL = 128;
-  }
+    uint8_t indexId = pgm_read_word_near(knobsLocation + i);
 
-  defaultPreset.highResolution = 1;
+    defaultPreset.knobInfo[indexId].MSB = i;
+    defaultPreset.knobInfo[indexId].LSB = i + 32;
+    defaultPreset.knobInfo[indexId].MODE = KNOB_MODE_STANDARD;
+    defaultPreset.knobInfo[indexId].CHANNEL = 0;
+    defaultPreset.knobInfo[indexId].INVERT_A = false;
+    defaultPreset.knobInfo[indexId].INVERT_B = false;
+  }
 
   // Write the default preset to all preset slots
   uint16_t baseAddress = 1;
@@ -55,15 +51,17 @@ void formatFactory()
   }
 
   // we write the signature so that the device will never rewrite the factory presets
-  EEPROM.update(EEPROM.length() - 3, MAJOR_VERSION);
-  EEPROM.update(EEPROM.length() - 2, MINOR_VERSION);
-  EEPROM.update(EEPROM.length() - 1, POINT_VERSION);
+  for (uint8_t i = 3; i > 0; i--)
+  {
+    uint8_t versionDigit = pgm_read_word_near(firmwareVersion + i - 1);
+    EEPROM.update(EEPROM.length() - i, versionDigit);
+  }
 }
 
 // Loads the specified preset in the RAM and make it the last used preset
 void loadPreset(uint8_t presetNumber)
 {
-  if (presetNumber < 5)
+  if (presetNumber < NUMBER_OF_PRESETS)
   {
     uint16_t baseAddress = 1 + (presetNumber * sizeof(Preset_t));
     // Read the active preset from EEPROM
@@ -74,7 +72,7 @@ void loadPreset(uint8_t presetNumber)
 
     // Update the last used preset
     currentPresetNumber = presetNumber;
-    n32b_display.showPresetNumber(presetNumber, disableKnobs);
+    n32b_display.showPresetNumber(presetNumber);
 
     // Save current preset as the active preset.
     // Is commented out to prevent EEPROM from over used
@@ -84,7 +82,7 @@ void loadPreset(uint8_t presetNumber)
 
 void savePreset(uint8_t presetNumber)
 {
-  if (presetNumber < 5)
+  if (presetNumber < NUMBER_OF_PRESETS)
   {
     uint16_t baseAddress = presetNumber * sizeof(Preset_t) + 1;
 

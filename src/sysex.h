@@ -1,5 +1,5 @@
 /*
-  N32B Hi Res Firmware v3.5.2
+  N32B Hi Res Firmware v3.6.0
   MIT License
 
   Copyright (c) 2022 SHIK
@@ -16,12 +16,9 @@
 #include "functions.h"
 
 void processSysex(unsigned char *, unsigned int);
-void setKnobAsCC(byte, byte, byte);
-void setKnobAsCCWithChannel(byte, byte, byte, byte);
-void setKnobAsDisabled(byte);
-void setKnobAsNRPN(byte, byte, byte);
-void useHighResolution(bool);
 void handleChangeChannel(byte);
 void handleProgramChange(byte, byte);
+void sendDeviceFirmwareVersion();
+void sendActivePreset();
 
 #endif
