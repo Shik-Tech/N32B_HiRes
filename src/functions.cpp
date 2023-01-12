@@ -225,16 +225,11 @@ void buttonReleaseAction(bool direction)
       n32b_display.showChannelNumber(activePreset.channel);
     }
   }
-
-  MIDICoreUSB.turnThruOn();
-  MIDICoreSerial.turnThruOn();
 }
 
 void buttonPressAction(bool direction)
 {
   pressedTime = millis();
-  MIDICoreSerial.turnThruOff();
-  MIDICoreUSB.turnThruOff();
 }
 
 void renderButtonFunctions()

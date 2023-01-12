@@ -99,9 +99,6 @@ void setup()
   MIDICoreUSB.begin(MIDI_CHANNEL_OMNI);
   MIDICoreSerial.begin(MIDI_CHANNEL_OMNI);
 
-  MIDICoreUSB.turnThruOn();
-  MIDICoreSerial.turnThruOn();
-
   // Send an Active Sensing MIDI message to notify the target that the controller is on the bus
   MIDICoreUSB.sendRealTime((midi::MidiType)0xFE);
   MIDICoreSerial.sendRealTime((midi::MidiType)0xFE);
